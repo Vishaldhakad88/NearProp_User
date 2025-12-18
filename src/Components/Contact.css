@@ -1,0 +1,165 @@
+.about-section {
+    width: 100%;
+}
+
+.about-banner {
+    background: url('https://img.freepik.com/premium-photo/minimalist-office-with-bright-green-laptop-small-plant-clean-organized_1325778-42324.jpg?ga=GA1.1.586528727.1721893114&semt=ais_hybrid&w=740') center center/cover no-repeat;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding-left: 50px;
+    color: white;
+}
+
+.about-banner h1 {
+    font-size: 36px;
+    font-weight: normal;
+}
+
+.intro p {
+    text-align: center;
+    padding: 20px;
+    color: #555;
+    font-size: 1rem;
+}
+
+.contact-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 20px;
+}
+
+.form-section {
+    flex: 1 1 60%;
+}
+
+.info-section {
+    flex: 1 1 35%;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group span {
+    color: red;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+.checkbox {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+button,
+.piyubutton {
+    width: 200px;
+    padding: 12px;
+    background: darkcyan;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.kuibutton {
+    width: 100%;
+    padding: 12px;
+    background: darkcyan;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.Piobutton {
+    width: 100%;
+    padding: 12px;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.kuibutton1 {
+    padding: 12px;
+    background: green;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.contact-person,
+.headquarters {
+    margin-bottom: 20px;
+}
+
+a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.social-icons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.social-icons img {
+    width: 24px;
+    height: 24px;
+}
+
+.confirmation-message {
+    margin-top: 20px;
+    padding: 10px;
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    text-align: center;
+}

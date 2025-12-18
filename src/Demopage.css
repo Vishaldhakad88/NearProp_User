@@ -1,0 +1,157 @@
+/* ===== Reset & Base Styles ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+  line-height: 1.5;
+}
+
+.property-filter-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ===== Navigation Tabs ===== */
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.nav-tabs button {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: #007b7b;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.nav-tabs button.active,
+.nav-tabs button:hover {
+  color: white;
+  background: #007b7b;
+}
+
+/* ===== Filters Form ===== */
+.filters-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  align-items: flex-end;
+}
+
+.form-group {
+  flex: 1 1 18%;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.filters-form select,
+.filters-form button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.filters-form button.search-btn {
+  background: #009688;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.filters-form button.search-btn:hover {
+  background: #00796b;
+}
+
+/* ===== Icon Grid ===== */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+.icon-card {
+  background: white;
+  padding: 20px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  font-weight: 500;
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.icon-card:hover {
+  transform: rotateY(5deg) rotateX(5deg);
+}
+
+/* ===== Individual Icon Colors ===== */
+.rent { color: #4caf50; }
+.sale { color: #2196f3; }
+.apartment { color: #9c27b0; }
+.plot { color: #f44336; }
+.hotel { color: #ff9800; }
+.banquet { color: #ff5722; }
+.pg { color: #673ab7; }
+.hostel { color: #009688; }
+
+/* ===== Responsive Breakpoints ===== */
+@media (max-width: 1024px) {
+  .form-group {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-form {
+    flex-direction: column;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .nav-tabs {
+    flex-direction: column;
+  }
+
+  .nav-tabs button {
+    width: 100%;
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  }
+}

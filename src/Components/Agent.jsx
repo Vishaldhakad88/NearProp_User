@@ -1,0 +1,734 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "./agents.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBed,
+  faShower,
+  faCar,
+  faUser,
+  faPaperclip,
+  faComment,
+  faMapMarkerAlt as faMapMarkerAltSolid,
+  faStar as faSolidStar,
+} from "@fortawesome/free-solid-svg-icons";
+import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
+import {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaWhatsapp as FaWhatsappSolid,
+  FaStar,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaHome,
+  FaCheckCircle,
+} from "react-icons/fa";
+import villa1 from "../assets/villa-1.avif";
+import villa2 from "../assets/villa-2.avif";
+import villa3 from "../assets/villa-3.avif";
+import nearpropLogo from "../assets/Nearprop 1.png";
+import axios from "axios";
+
+const baseUrl = "https://api.nearprop.com";
+const apiPrefix = "api";
+
+function Agent() {
+  const [developers, setDevelopers] = useState([]);
+  const [filteredDevelopers, setFilteredDevelopers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedDeveloper, setSelectedDeveloper] = useState(null);
+  const [activeTab, setActiveTab] = useState("about");
+  const [agentListings, setAgentListings] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState(null);
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const navigate = useNavigate();
+
+  // Location filters
+  const [states, setStates] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  const getAuthData = () => {
+    const authData = localStorage.getItem("authData");
+    if (authData) {
+      try {
+        return JSON.parse(authData);
+      } catch (err) {
+        console.error("Error parsing authData:", err);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const getToken = () => {
+    const authData = getAuthData();
+    return authData ? authData.token : null;
+  };
+
+  // Check authentication and show toast if not logged in
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      toast.warn("Please log in to view property advisors.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          navigate("/login", { state: { from: "/agents" } });
+        },
+      });
+    }
+  }, [navigate]);
+
+  // Fetch developers
+  useEffect(() => {
+    const fetchDevelopers = async () => {
+      try {
+        const token = getToken();
+        if (!token) return; // Skip fetching if not authenticated
+
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `${baseUrl}/${apiPrefix}/v1/admin/users/role/ADVISOR`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch developers");
+
+        const data = await response.json();
+        setDevelopers(data.data || []);
+        setFilteredDevelopers(data.data || []);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchDevelopers();
+  }, []);
+
+  // Fetch districts/states
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const token = getToken();
+        if (!token) return; // Skip fetching if not authenticated
+
+        const res = await axios.get(`${baseUrl}/${apiPrefix}/property-districts`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const districtsData = res.data || [];
+        setDistricts(districtsData);
+
+        const uniqueStates = [...new Set(districtsData.map((d) => d.state))];
+        setStates(uniqueStates);
+      } catch (err) {
+        console.error("Failed to load location data:", err.message);
+      }
+    };
+    fetchDistricts();
+  }, []);
+
+  // Update filtered districts when state changes
+  useEffect(() => {
+    if (selectedState) {
+      const filtered = districts.filter((d) => d.state === selectedState);
+      setFilteredDistricts(filtered);
+      setSelectedDistrict("");
+    } else {
+      setFilteredDistricts([]);
+      setSelectedDistrict("");
+    }
+  }, [selectedState, districts]);
+
+  const applyFilters = () => {
+    let filtered = [...developers];
+
+    if (searchQuery) {
+      filtered = filtered.filter((dev) =>
+        dev.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedState) {
+      filtered = filtered.filter((dev) => dev.state === selectedState);
+    }
+    if (selectedDistrict) {
+      filtered = filtered.filter((dev) => dev.district === selectedDistrict);
+    }
+
+    setFilteredDevelopers(filtered);
+  };
+
+  const openDeveloperModal = (developer) => {
+    setSelectedDeveloper(developer);
+    setActiveTab("about");
+    document.body.style.overflow = "hidden";
+    fetchAgentListings(developer.id);
+    fetchAdvisorReviews(developer.id);
+  };
+
+  const closeDeveloperModal = () => {
+    setSelectedDeveloper(null);
+    document.body.style.overflow = "auto";
+    setAgentListings([]);
+    setReviews([]);
+    setAverageRating(0);
+    setReviewCount(0);
+  };
+
+  const fetchAgentListings = async (developerId) => {
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Authentication token missing");
+
+      const res = await fetch(`${baseUrl}/${apiPrefix}/properties`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch properties");
+
+      const data = await res.json();
+      const filteredListings = (data.data || []).filter(
+        (property) => property.owner?.id === developerId
+      );
+      setAgentListings(filteredListings);
+    } catch (err) {
+      console.error("Failed to fetch listings:", err);
+      setAgentListings([]);
+    }
+  };
+
+  const fetchAdvisorReviews = async (developerId) => {
+    try {
+      setReviewsLoading(true);
+      setReviewsError(null);
+      const token = getToken();
+      if (!token) throw new Error("Authentication token missing");
+
+      const propertiesRes = await fetch(`${baseUrl}/${apiPrefix}/properties`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!propertiesRes.ok) throw new Error("Failed to fetch properties");
+
+      const propertiesData = await propertiesRes.json();
+      const advisorProperties = (propertiesData.data || []).filter(
+        (property) => property.owner?.id === developerId
+      );
+
+      let allReviews = [];
+      let totalRating = 0;
+      let totalReviews = 0;
+
+      for (const property of advisorProperties) {
+        const reviewsRes = await fetch(
+          `${baseUrl}/${apiPrefix}/reviews/property/${property.id}?page=0&size=10&sortBy=createdAt&direction=DESC`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (reviewsRes.ok) {
+          const reviewsData = await reviewsRes.json();
+          const reviews = reviewsData.content || [];
+          allReviews = [...allReviews, ...reviews];
+          totalRating += reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+          totalReviews += reviews.length;
+        }
+      }
+
+      setReviews(allReviews);
+      setReviewCount(totalReviews);
+      setAverageRating(totalReviews > 0 ? (totalRating / totalReviews).toFixed(1) : 0);
+      setReviewsLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch reviews:", err);
+      setReviewsError("Failed to load reviews. Please try again later.");
+      setReviewsLoading(false);
+    }
+  };
+
+  // Do not render content if not authenticated
+  const token = getToken();
+  if (!token) {
+    return <ToastContainer />;
+  }
+
+  return (
+    <>
+      <div className="page-container">
+        <div className="content-area">
+          <h2 className="p-3">Property Advisor</h2>
+          {loading && <p>Loading developers...</p>}
+          {error && <p className="error-message">Error: {error}</p>}
+          {!loading && !error && filteredDevelopers.length === 0 && (
+            <p>No developers found.</p>
+          )}
+
+          <div className="agents-grid">
+            {filteredDevelopers.map((developer) => (
+              <div key={developer.id} className="nearprop-agent-card">
+                <img
+                  src={
+                    developer.profileImageUrl ||
+                    nearpropLogo
+                  }
+                  alt={developer.name || "Developer"}
+                  className="nearprop-agent-photo"
+                  onError={(e) => {
+                    e.target.src = nearpropLogo;
+                  }}
+                />
+                <div className="nearprop-agent-info">
+                  <div className="nearprop-header d-inline-flex p-2">
+                    <h2 className="nearprop-agent-name ">
+                      {developer.name || "Unknown Developer"}
+                    </h2>
+                    <div className="nearprop-stars">★ ★ ★ ☆ ☆</div>
+                  </div>
+                  <p className="nearprop-designation p-2">
+                    Developer at <a href="#">Modern House Real Estate</a>
+                  </p>
+                  <div className="nearprop-details">
+                    <div className="nearprop-row">
+                      <span>Call</span>
+                      <p>
+                        <a href={`tel:${developer.mobileNumber || "3214569874"}`}>
+                          <FaPhoneAlt className="contact-icon" />
+                        </a>
+                      </p>
+                    </div>
+                    <hr />
+                    <div className="nearprop-row">
+                      <span>WhatsApp</span>
+                      <p>
+                        <a
+                          href={`https://wa.me/${developer.mobileNumber || "3214569874"}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <FaWhatsappSolid className="contact-icon" style={{ color: "#25D366" }} />
+                        </a>
+                      </p>
+                    </div>
+                    <hr />
+                    <div className="nearprop-row">
+                      <span>Email</span>
+                      <p>
+                        <a href={`mailto:${developer.email || "developer@nearprop.com"}`}>
+                          <FaEnvelope className="contact-icon" />
+                        </a>
+                      </p>
+                    </div>
+                    <hr />
+                    <div className="nearprop-row">
+                      <span>Profile</span>
+                      <label onClick={() => openDeveloperModal(developer)}>View</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="agents-sidebar">
+          <div className="widget">
+            <h3>Find Developer</h3>
+            <input
+              type="text"
+              placeholder="Enter developer name"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="filter-group">
+              <label className="filter-label">State</label>
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">All States</option>
+                {states.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label className="filter-label">District</label>
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">All Districts</option>
+                {filteredDistricts.map((d) => (
+                  <option key={d.district} value={d.district}>
+                    {d.district}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button className="search-btn" onClick={applyFilters}>Search Developer</button>
+          </div>
+         
+        </div>
+      </div>
+
+      {/* Full-Page Modal */}
+      {selectedDeveloper && (
+        <div className="agentlist-modal-fullpage">
+          <div className="agentlist-modal-content">
+            <div className="agentlist-modal-header">
+              <span className="agentlist-modal-title">Advisor Profile</span>
+              <span className="agentlist-modal-close" onClick={closeDeveloperModal}>
+                &times;
+              </span>
+            </div>
+
+            <div className="agentlist-modal-profile">
+              <img
+                src={
+                  selectedDeveloper.profileImageUrl ||
+                  nearpropLogo
+                }
+                alt={selectedDeveloper.name}
+                className="agentlist-modal-img"
+                onError={(e) => {
+                  e.target.src = nearpropLogo;
+                }}
+              />
+              <div className="agentlist-modal-info">
+                <h2>
+                  {selectedDeveloper.name || "Unknown Developer"}{" "}
+                  <FaCheckCircle className="agentlist-verified" />
+                </h2>
+                <p className="agentlist-role-text">
+                  Advisor at Modern House Real Estate
+                </p>
+                <div className="agentlist-rating">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <FaStar
+                      key={i}
+                      className={i < Math.round(averageRating) ? "star-filled" : "star-empty"}
+                    />
+                  ))}
+                  <span>{averageRating} ({reviewCount} Reviews)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="agentlist-actions">
+              <a href={`mailto:${selectedDeveloper.email || "developer@nearprop.com"}`}>
+                <button className="agentlist-email">
+                  <FaEnvelope /> Email
+                </button>
+              </a>
+              <a href={`tel:${selectedDeveloper.mobileNumber || "3214569874"}`}>
+                <button className="agentlist-call">
+                  <FaPhoneAlt /> Call
+                </button>
+              </a>
+              <a
+                href={`https://wa.me/${selectedDeveloper.mobileNumber || "3214569874"}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="agentlist-whatsapp">
+                  <FaWhatsappSolid /> WhatsApp
+                </button>
+              </a>
+            </div>
+
+            {/* Tabs */}
+            <div className="agentlist-tabs">
+              <span
+                className={activeTab === "about" ? "active" : ""}
+                onClick={() => setActiveTab("about")}
+              >
+                About
+              </span>
+              <span
+                className={activeTab === "reviews" ? "active" : ""}
+                onClick={() => setActiveTab("reviews")}
+              >
+                Reviews
+              </span>
+              <span
+                className={activeTab === "listings" ? "active" : ""}
+                onClick={() => setActiveTab("listings")}
+              >
+                Listings
+              </span>
+            </div>
+
+            <div className="agentlist-tab-content">
+              {activeTab === "about" && (
+                <div>
+                  <h3>Details</h3>
+                  <p><FaBuilding /> Company: Modern House Real Estate</p>
+                  <p><FaMapMarkerAlt /> Address: California, USA</p>
+                  <p><FaHome /> Properties: {agentListings.length || 0} listings</p>
+                </div>
+              )}
+
+              {activeTab === "reviews" && (
+                <div className="review-section">
+                  <div className="review-header">
+                    <h3>
+                      <FontAwesomeIcon icon={faComment} className="comment-icon" /> {reviewCount} Reviews{' '}
+                      <span>({averageRating} / 5)</span>
+                    </h3>
+                  </div>
+                  {reviewsLoading ? (
+                    <div className="loading">Loading reviews...</div>
+                  ) : reviewsError ? (
+                    <div className="error-message">{reviewsError}</div>
+                  ) : reviews.length === 0 ? (
+                    <div className="no-results">No reviews yet for this advisor's properties.</div>
+                  ) : (
+                    <div className="reviews-list">
+                      {reviews.map((review) => (
+                        <div key={review.id} className="review">
+                          <div className="review-meta">
+                            <div>
+                              <p className="review-author">{review.user?.name || 'Anonymous'}</p>
+                              <div className="review-stars">
+                                {[1, 2, 3, 4, 5].map((num) => (
+                                  <FontAwesomeIcon
+                                    key={num}
+                                    icon={num <= review.rating ? faSolidStar : faRegularStar}
+                                    className="star"
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            <p className="review-date">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <p className="review-comment">{review.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "listings" && (
+                <div className="agentlistings-container">
+                  <h3>{agentListings.length} Property Listing(s)</h3>
+                  {agentListings.length === 0 ? (
+                    <p className="no-results">No listings found for this advisor.</p>
+                  ) : (
+                    <div className="listing-cards">
+                      {agentListings.map((property) => {
+                        const propertyTypeLower = property?.type.toLowerCase();
+                        const hideResidentialDetails = propertyTypeLower === "plot" || propertyTypeLower === "commercial";
+                        return (
+                          <Link
+                            to={`/propertySell/${property.id}`}
+                            key={property.id || property._id}
+                            className="property-card-link"
+                          >
+                            <div className="landing-property-card">
+                              <div className="landing-image-container">
+                                <img
+                                  src={property.imageUrls?.[0] || villa1}
+                                  alt={property.title || "Property"}
+                                  className="landing-property-image"
+                                  onError={(e) => {
+                                    e.target.src = villa1;
+                                  }}
+                                />
+                                <span
+                                  className={`landing-label landing-${
+                                    property.status
+                                      ? property.status.toLowerCase().replace("_", "-")
+                                      : "for-sale"
+                                  }`}
+                                  style={{
+                                    position: "absolute",
+                                    top: 10,
+                                    left: 10,
+                                    padding: "4px 10px",
+                                    borderRadius: 6,
+                                    fontSize: 12,
+                                    fontWeight: "bold",
+                                    zIndex: 10,
+                                  }}
+                                >
+                                  {property.status?.replace("_", " ") || "For Sale"}
+                                </span>
+                                <div className="landing-overlay-icons-left">
+                                  ₹
+                                  {property.price
+                                    ? Number(property.price).toLocaleString("en-IN")
+                                    : "N/A"}
+                                  <br />
+                                  <span>
+                                    ₹
+                                    {property.price && property.area
+                                      ? Math.round(
+                                          Number(property.price) / Number(property.area)
+                                        )
+                                      : "N/A"}
+                                    /Sq Ft
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="landing-property-info" style={{
+                                padding: "15px",
+                                minHeight: "300px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",
+                                overflow: "visible",
+                              }}>
+                                <div>
+                                  <h2 className="landing" style={{
+                                    fontSize: "1.125rem",
+                                    fontWeight: "600",
+                                    color: "#1a202c",
+                                    margin: "0 0 10px",
+                                    lineHeight: "1.5",
+                                    overflow: "visible",
+                                    wordBreak: "break-word",
+                                    maxWidth: "100%",
+                                    ...(window.innerWidth <= 768 ? { fontSize: "0.9rem" } : {}),
+                                  }}>
+                                    {property.title || "Untitled Property"}
+                                  </h2>
+                                  <div className="landing-location" style={{
+                                    fontSize: "0.875rem",
+                                    color: "#4a5568",
+                                    marginBottom: "10px",
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: "6px",
+                                    wordBreak: "break-word",
+                                  }}>
+                                    <FontAwesomeIcon icon={faMapMarkerAltSolid} />{" "}
+                                    <span style={{ wordBreak: "break-word", maxWidth: "100%" }}>
+                                      {property.address || "No Address"}
+                                    </span>
+                                  </div>
+
+                                  <div className="landing-details" style={{
+                                    display: "flex",
+                                    gap: "12px",
+                                    fontSize: "0.875rem",
+                                    color: "#4a5568",
+                                    marginBottom: "10px",
+                                    flexWrap: "wrap",
+                                  }}>
+                                    {!hideResidentialDetails && (
+                                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                        <FontAwesomeIcon icon={faBed} /> {property.bedrooms || 0}
+                                      </span>
+                                    )}
+                                    {!hideResidentialDetails && (
+                                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                        <FontAwesomeIcon icon={faShower} />{" "}
+                                        {property.bathrooms || 0}
+                                      </span>
+                                    )}
+                                    {!hideResidentialDetails && (
+                                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                        <FontAwesomeIcon icon={faCar} /> {property.garages || 0}
+                                      </span>
+                                    )}
+                                    <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                      {property.area || "N/A"} {property.sizePostfix || "Sq Ft"}
+                                    </span>
+                                  </div>
+
+                                  <div className="landing-type" style={{
+                                    fontSize: "0.875rem",
+                                    fontWeight: "600",
+                                    color: "#3182ce",
+                                    marginBottom: "10px",
+                                    display: "block",
+                                    wordBreak: "break-word",
+                                  }}>
+                                    <strong>{property.type || "Unknown"}</strong>
+                                  </div>
+                                </div>
+
+                                <div className="landing-footer" style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  fontSize: "0.75rem",
+                                  color: "#4a5568",
+                                  borderTop: "1px solid #e2e8f0",
+                                  paddingTop: "10px",
+                                  flexWrap: "wrap",
+                                  gap: "8px",
+                                  wordBreak: "break-word",
+                                }}>
+                                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                    <FontAwesomeIcon icon={faUser} />{" "}
+                                    {property.owner?.name || "Unknown"}
+                                  </span>
+                                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                    <FontAwesomeIcon icon={faPaperclip} />{" "}
+                                    {property.createdAt
+                                      ? new Date(property.createdAt).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default Agent;

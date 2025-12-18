@@ -1,0 +1,183 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #1C2526; /* Darker shade for text readability */
+}
+
+/* Terms Page */
+.terms-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Banner */
+.terms-banner {
+  background: url('https://img.freepik.com/premium-photo/minimalist-office-with-bright-green-laptop-small-plant-clean-organized_1325778-42324.jpg?ga=GA1.1.586528727.1721893114&semt=ais_hybrid&w=740') center center/cover no-repeat;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 50px;
+  color: white;
+}
+
+.terms-banner h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Terms Container */
+.terms-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+/* Sidebar */
+.terms-sidebar {
+  flex: 1;
+  min-width: 250px;
+  background: #E6F0FA; /* Light cyan background */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.terms-sidebar h2 {
+  font-size: 1.75rem;
+  margin-bottom: 20px;
+  color: #008B8B; /* Dark cyan for headings */
+}
+
+.terms-sidebar ul {
+  list-style: none;
+}
+
+.terms-sidebar li {
+  margin-bottom: 12px;
+  position: relative;
+  padding-left: 20px;
+  font-family: 'Roboto', sans-serif; /* Different font for sidebar links */
+  font-weight: 700; /* Bold font weight */
+}
+
+.terms-sidebar li::before {
+  content: '•'; /* Custom dot */
+  position: absolute;
+  left: 0;
+  color: #008B8B; /* Dark cyan dot */
+  font-size: 1.2rem;
+}
+
+.terms-sidebar a {
+  text-decoration: none;
+  color: black; /* Lighter cyan for links */
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.terms-sidebar a:hover {
+  color: #006D6D; /* Darker cyan on hover */
+  text-decoration: underline;
+}
+
+/* Main Content */
+.terms-content {
+  flex: 3;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.terms-content section {
+  margin-bottom: 40px;
+}
+
+.terms-content h3 {
+  font-size: 1.5rem;
+  color: #008B8B; /* Dark cyan for section headings */
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.terms-content p {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #1C2526; /* Darker text for readability */
+}
+
+.terms-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.terms-content li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #1C2526;
+}
+
+.terms-content a {
+  color: #00CED1; /* Lighter cyan for links */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.terms-content a:hover {
+  color: #006D6D; /* Darker cyan on hover */
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terms-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .terms-banner h1 {
+    font-size: 2rem;
+  }
+
+  .terms-sidebar h2 {
+    font-size: 1.5rem;
+  }
+
+  .terms-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .terms-content p,
+  .terms-content li {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terms-banner {
+    padding: 40px 15px;
+  }
+
+  .terms-banner h1 {
+    font-size: 1.75rem;
+  }
+
+  .terms-sidebar {
+    padding: 15px;
+  }
+
+  .terms-content {
+    padding: 15px;
+  }
+}

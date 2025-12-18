@@ -1,0 +1,193 @@
+.review-section {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: Arial, sans-serif;
+}
+
+.rating-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.avg-rating {
+  font-weight: normal;
+  color: #666;
+}
+
+.rating-distribution {
+  margin-bottom: 20px;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.star-label {
+  width: 40px;
+  font-weight: bold;
+}
+
+.progress-bar {
+  flex: 1;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.count {
+  width: 24px;
+  text-align: right;
+}
+
+.reviews-list {
+  margin-bottom: 24px;
+}
+
+.review-card {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-user {
+  font-weight: bold;
+}
+
+.review-stars {
+  color: #fbbf24;
+}
+
+.star-icon {
+  color: #fbbf24;
+  margin-right: 2px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.review-date {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.review-text {
+  margin-top: 6px;
+}
+
+.review-form {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.form-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.star-rating {
+  margin: 8px 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+button {
+  background-color: darkcyan;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+
+.comment-section {
+  margin-top: 16px;
+}
+
+.comment-card {
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.comment-user {
+  font-weight: bold;
+}
+
+.comment-text {
+  margin: 4px 0;
+}
+
+.comment-date {
+  color: #777;
+  font-size: 0.8rem;
+}
+
+.comment-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.comment-post-btn {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.comment-post-btn:hover {
+  background-color: #2563eb;
+}
+
+.empty-text {
+  color: #666;
+  font-size: 0.95rem;
+}

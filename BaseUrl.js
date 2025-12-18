@@ -1,0 +1,1 @@
+export const baseurl = `https://api.nearprop.com/api`;

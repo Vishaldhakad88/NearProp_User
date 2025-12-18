@@ -1,0 +1,153 @@
+.beds-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.bed-card-wrapper {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bed-card-wrapper:hover {
+  transform: translateY(-5px);
+}
+
+.bed-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.bed-image-container {
+  position: relative;
+  height: 200px;
+  background: #f0f0f0;
+}
+
+.bed-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-weight: 500;
+}
+
+.bed-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.status-available {
+  background: #28a745;
+}
+
+.status-occupied {
+  background: #dc3545;
+}
+
+.status-other {
+  background: #6c757d;
+}
+
+.bed-price {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bed-price span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.bed-info {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bed-info h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+  margin: 0;
+}
+
+.bed-description {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.bed-details {
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bed-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.edit-btn {
+  background: #007bff;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #0069d9;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+.no-beds-text {
+  text-align: center;
+  color: #888;
+  font-size: 16px;
+  padding: 20px 0;
+}

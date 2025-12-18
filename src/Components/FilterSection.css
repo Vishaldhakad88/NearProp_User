@@ -1,0 +1,206 @@
+/* Center wrapper to position the filter section */
+.center-wrapper {
+  position: sticky;
+  top: 24px; /* Slightly increased for better header clearance */
+  z-index: 20; /* Higher z-index to stay above content */
+  width: 320px; /* Slightly wider for better spacing */
+  margin-right: 24px; /* Increased margin for better separation */
+  margin-left: 16px; /* Added left margin for balance */
+}
+
+/* Filter section wrapper */
+.filtersection-wrapper {
+  background: linear-gradient(145deg, #ffffff, #f8fafc); /* Subtle gradient for depth */
+  padding: 24px;
+  border-radius: 12px; /* Softer corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer, modern shadow */
+  max-height: calc(100vh - 48px); /* Adjusted for top spacing */
+  overflow-y: auto; /* Scroll within filter section */
+  scrollbar-width: thin; /* Slim scrollbar for Firefox */
+  scrollbar-color: #cbd5e1 #f1f5f9; /* Custom scrollbar colors */
+}
+
+
+/* Hide scrollbar for Webkit browsers */
+.filtersection-wrapper::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in Chrome, Safari, etc. */
+}
+
+/* Title styling */
+.filtersection-title {
+  font-size: 1.75rem; /* Larger for prominence */
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #1e293b; /* Darker slate for better contrast */
+  letter-spacing: -0.025em; /* Subtle letter spacing */
+}
+
+/* Error message */
+.filtersection-error {
+  color: #dc2626; /* Vibrant red for errors */
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: #fef2f2; /* Light red background */
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* Block styling */
+.filtersection-block {
+  margin-bottom: 24px;
+}
+
+/* Subtitle styling */
+.filtersection-subtitle {
+  font-size: 1.125rem; /* Slightly larger for clarity */
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #334155; /* Slate color for readability */
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* Subtle uppercase effect */
+}
+
+/* Category child (clickable items) */
+.filtersection-category-child {
+  padding: 12px 16px;
+  cursor: pointer;
+  border: 1px solid #e2e8f0; /* Lighter border */
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  transition: all 0.3s ease; /* Smooth transitions */
+  font-size: 1rem;
+  color: #475569;
+}
+
+.filtersection-category-child:hover {
+  background: #f1f5f9; /* Light hover effect */
+  transform: translateY(-2px); /* Subtle lift effect */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.filtersection-category-child.active {
+  background: linear-gradient(90deg, #0e7490, #06b6d4); /* Gradient for active state */
+  color: #ffffff;
+  border-color: transparent;
+  font-weight: 500;
+}
+
+/* Select and input styling */
+.filtersection-select,
+.filtersection-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #1e293b;
+  background: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filtersection-select:focus,
+.filtersection-input:focus {
+  outline: none;
+  border-color: #06b6d4; /* Cyan focus ring */
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); /* Soft glow */
+}
+
+/* Slider styling */
+.filtersection-slider {
+  width: 100%;
+  margin-bottom: 12px;
+  accent-color: #06b6d4; /* Custom slider color */
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.filtersection-slider::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  background: #06b6d4;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filtersection-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #06b6d4;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Price inputs container */
+.filtersection-price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filtersection-price-inputs span {
+  font-size: 1rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Search button */
+.filtersection-search-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #0e7490, #06b6d4); /* Gradient button */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filtersection-search-btn:hover {
+  background: linear-gradient(90deg, #155e75, #0284c7); /* Darker gradient on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.filtersection-search-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(6, 182, 212, 0.2);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .center-wrapper {
+    position: static; /* Disable sticky on mobile */
+    width: 100%;
+    margin: 16px;
+  }
+
+  .huj{
+  top: 70px; 
+  } 
+
+  .filtersection-wrapper {
+    max-height: none; /* Remove height restriction on mobile */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .filtersection-title {
+    font-size: 1.5rem;
+  }
+
+  .filtersection-subtitle {
+    font-size: 1rem;
+  }
+
+}
+

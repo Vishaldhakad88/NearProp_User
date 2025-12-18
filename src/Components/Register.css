@@ -1,0 +1,422 @@
+.registerbody {
+  background-image: url('https://img.freepik.com/free-photo/photorealistic-wooden-house-with-timber-structure_23-2151302633.jpg?ga=GA1.1.586528727.1721893114&semt=ais_hybrid&w=740');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.registeruser-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  width: 100%;
+  max-width: 450px;
+  animation: fadeIn 0.8s ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.registeruser-heading {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.registeruser-input-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.registeruser-input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  color: #333;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.registeruser-input-group input:focus {
+  border-color: #ff5722;
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.2);
+}
+
+.registeruser-input-group input.error-input {
+  border-color: #dc3545;
+  background-color: #ffe6e6;
+}
+
+.registeruser-input-group label {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: #fff;
+  padding: 0 5px;
+  color: #666;
+  font-size: 12px;
+  transition: 0.3s ease;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.registeruser-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: darkcyan;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.registeruser-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 139, 139, 0.3);
+}
+
+.registeruser-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.registeruser-footer a {
+  color: #ff5722;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.registeruser-footer a:hover {
+  color: #e64a19;
+  text-decoration: underline;
+}
+
+.verify-container {
+  padding: 0;
+  text-align: center;
+}
+
+.verify-heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: darkcyan;
+}
+
+.verify-section label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+  text-align: left;
+}
+
+.verify-section input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.3s;
+  box-sizing: border-box;
+}
+
+.verify-section input:focus {
+  border-color: darkcyan;
+}
+
+.verify-section input.error-input {
+  border-color: #dc3545;
+  background-color: #ffe6e6;
+}
+
+.verify-btn {
+  background-color: darkcyan;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 48%;
+  cursor: pointer;
+}
+
+.verify-btn:hover {
+  background-color: #006d6d;
+}
+
+.resend-btn {
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 48%;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.resend-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.resend-btn:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.resend-timer {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.d-flex.gap-2 {
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.error-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.error-dialog-content {
+  background: #1a1a1a;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-in-out;
+}
+
+.error-dialog-content h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #ff4d4d;
+}
+
+.error-dialog-content p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+}
+
+.error-dialog-button {
+  background: darkcyan;
+  color: white;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.error-dialog-button:hover {
+  background: linear-gradient(135deg, #FF5FC8, #A45BFF);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.phone-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  position: relative;
+}
+
+.country-code-select {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+  flex-shrink: 0;
+  width: 80px; /* Adjusted for better visibility */
+}
+
+.phone-input {
+  flex-grow: 1;
+  width: 100%; /* Ensure full width for phone input */
+}
+
+.welcome-text {
+  font-size: 25px;
+  font-weight: 500;
+  color: darkcyan;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .registeruser-container {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .registeruser-heading {
+    font-size: 24px;
+  }
+
+  .registeruser-input-group input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .registeruser-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .verify-heading {
+    font-size: 20px;
+  }
+
+  .verify-section input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .verify-btn,
+  .resend-btn {
+    font-size: 14px;
+    padding: 8px;
+    width: 45%;
+  }
+
+  .phone-group {
+    flex-direction: row; /* Keep row layout for better visibility */
+    gap: 8px;
+  }
+
+  .country-code-select {
+    width: 70px; /* Slightly smaller for medium screens */
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .phone-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .registeruser-container {
+    padding: 15px;
+    max-width: 95%;
+  }
+
+  .registeruser-heading {
+    font-size: 20px;
+  }
+
+  .registeruser-input-group input {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .registeruser-btn {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .verify-heading {
+    font-size: 18px;
+  }
+
+  .verify-section input {
+    font-size: 13px;
+    padding: 6px;
+  }
+
+  .verify-btn,
+  .resend-btn {
+    font-size: 13px;
+    padding: 6px;
+    width: 100%;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phone-group {
+    flex-direction: row; /* Keep row layout to ensure visibility */
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap; /* Prevent wrapping */
+  }
+
+  .country-code-select {
+    width: 60px; /* Smaller width for small screens */
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .phone-input {
+    width: 100%; /* Ensure phone input takes remaining space */
+    flex-grow: 1;
+  }
+
+  .registeruser-input-group label {
+    font-size: 11px;
+    top: -8px;
+    left: 10px;
+  }
+}

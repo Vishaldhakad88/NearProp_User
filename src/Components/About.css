@@ -1,0 +1,383 @@
+.about-section {
+  width: 100%;
+}
+
+.about-banner {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('https://img.freepik.com/premium-photo/minimalist-office-with-bright-green-laptop-small-plant-clean-organized_1325778-42324.jpg?ga=GA1.1.586528727.1721893114&semt=ais_hybrid&w=740')
+    center center/cover no-repeat;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.banner-content {
+  padding: 20px;
+}
+
+.banner-content h1 {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.banner-subtitle {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.banner-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #00aaff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.banner-btn:hover {
+  background-color: #0088cc;
+}
+
+.about-content {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.about-highlight {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.about-highlight:hover {
+  transform: translateY(-5px);
+}
+
+.about-highlight h3 {
+  font-size: 22px;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.about-highlight p {
+  font-size: 16px;
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+/* Inner image slider fix */
+.neartime-image-container .slick-slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.neartime-image-container .slick-slide img {
+  width: 100% !important;
+  height: 270px !important;
+  object-fit: cover;
+}
+
+.neartime-image-container .slick-track {
+  display: flex !important;
+}
+
+.services-section {
+  padding: 50px 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 300px;
+  gap: 20px;
+}
+
+.service-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover img {
+  transform: scale(1.05);
+}
+
+.service-content {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+}
+
+.service-content span {
+  font-size: 12px;
+  opacity: 0.8;
+  display: block;
+}
+
+.service-content h3 {
+  font-size: 18px;
+  margin: 5px 0;
+  line-height: 1.2;
+}
+
+.service-content a {
+  font-size: 12px;
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.service-content a span {
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+/* Tall Cards */
+.service-card.tall {
+  grid-row: span 2;
+}
+
+.blog-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 50px 20px;
+  gap: 20px;
+  background: #fff;
+}
+
+.blog-card {
+  background: #fff;
+  width: 250px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.blog-card img {
+  width: 100%;
+  height: auto;
+}
+
+.blog-content {
+  padding: 15px;
+}
+
+.blog-content .date {
+  font-size: 12px;
+  color: #999;
+}
+
+.blog-content h3 {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.blog-content p {
+  font-size: 14px;
+  color: #666;
+}
+
+.read-more {
+  color: #00aaff;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.author {
+  font-size: 12px;
+  color: #777;
+  margin-top: 10px;
+}
+
+.testimonials-section {
+  text-align: center;
+  padding: 50px 20px;
+  background: #f9f9f9;
+  overflow: hidden;
+}
+
+.testimonials-section h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.testimonials-section .subtitle {
+  color: #999;
+  margin-bottom: 30px;
+}
+
+.testimonial-cards {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.5s ease-in-out;
+}
+
+.testimonial-card {
+  background: #eef2f3;
+  width: 300px;
+  flex-shrink: 0;
+  padding: 20px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.testimonial-card .quote {
+  font-size: 30px;
+  color: #aaa;
+  margin: 0 0 10px;
+}
+
+/* Hide slider on desktop, show normal grid */
+.desktop-view {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mobile-slider {
+  display: none;
+}
+
+/* On mobile, hide grid and show slider */
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+  .mobile-slider {
+    display: block;
+  }
+}
+
+.testimonial-card p {
+  font-size: 14px;
+  color: #555;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Desktop: normal layout */
+@media (min-width: 769px) {
+  .testimonial-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Mobile: show slider */
+@media (max-width: 768px) {
+  .testimonial-cards {
+    flex-wrap: nowrap;
+  }
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+@media (max-width: 992px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 250px;
+  }
+
+  .service-card.tall {
+    grid-row: span 1;
+  }
+}
+
+/* Responsive - Mobile (≤ 600px) */
+@media (max-width: 600px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .service-card {
+    height: auto;
+  }
+
+  .service-card img {
+    height: 250px;
+  }
+
+  .service-card.tall {
+    grid-row: span 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .city-card {
+    width: 300px;
+  }
+
+  .city-image {
+    height: 400px;
+  }
+}
+
+/* Default: dark/transparent bg */
+.nearprop-logo-text {
+  color: white;
+}
+
+/* Jab parent white bg ho */
+.bg-white .nearprop-logo-text {
+  color: darkcyan;
+}

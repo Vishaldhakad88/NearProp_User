@@ -1,0 +1,388 @@
+.footer-section {
+  background: linear-gradient(135deg, #006666, #004c4c);
+  color: #fff;
+  padding: 40px 20px 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+h2.brand-title::after {
+  content: none !important; /* Explicitly disable ::after */
+}
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.footer-col {
+  flex: 1 1 200px;
+  min-width: 200px;
+}
+
+.logo-col {
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+
+.brand-header {
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.text-container {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.logo-img {
+  width: 60px;
+  height: auto;
+  transition: transform 0.3s ease;
+  margin-left: -25px;
+  margin-top: -38px;
+}
+
+.logo-img:hover {
+  transform: scale(1.1);
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin-left: -20px;
+  transition: color 0.3s ease;
+}
+
+.brand-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #dfefff;
+  margin: 2px 0 0;
+   margin-left: -20px;
+  transition: color 0.3s ease;
+}
+
+.brand-header:hover .brand-title {
+  color: #ffec99;
+}
+
+.brand-header:hover .brand-subtitle {
+  color: #c0fefe;
+}
+
+.description {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.download-app {
+  margin-top: 10px;
+}
+
+.download-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #d78e10;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.download-desc {
+  font-size: 0.85rem;
+  color: #dfefff;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.playstore-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: black;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.playstore-link:hover {
+  background: black;
+  transform: scale(1.05);
+}
+
+.playstore-icon {
+  font-size: 1.2rem;
+  color: blue;
+}
+
+.footer-col h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: #fff;
+  border-bottom: 2px solid #d78e10;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin: 8px 0;
+}
+
+.footer-col ul li a {
+  color: #dfefff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+  color: #d78e10;
+}
+
+.footer-col p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.social-icons {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.social-icons a {
+  color: #fff;
+  font-size: 1.1rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #d78e10;
+  transform: scale(1.2);
+}
+
+.footer-bottom {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.15);
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.95rem;
+  color: #c0fefe;
+  margin-top: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .footer-content {
+    gap: 20px;
+  }
+
+  .footer-col {
+    flex: 1 1 180px;
+    min-width: 180px;
+  }
+
+  .logo-col {
+    flex: 1 1 280px;
+    min-width: 230px;
+  }
+
+  .logo-img {
+    width: 30px;
+  }
+
+  .brand-title {
+    font-size: 1.8rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .download-title {
+    font-size: 1.1rem;
+  }
+
+  .download-desc {
+    font-size: 0.8rem;
+  }
+
+  .playstore-link {
+    padding: 7px 12px;
+    font-size: 0.85rem;
+  }
+
+  .playstore-icon {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .text-container {
+    justify-content: center;
+  }
+
+  .logo-img {
+    width: 30px;
+  }
+
+  .brand-title {
+    font-size: 1.6rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .download-title {
+    font-size: 1rem;
+  }
+
+  .download-desc {
+    font-size: 0.75rem;
+  }
+
+  .playstore-link {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .playstore-icon {
+    font-size: 1rem;
+  }
+
+  .footer-col {
+    min-width: 100%;
+  }
+
+  .logo-col {
+    min-width: 100%;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+
+  .footer-col h3 {
+    font-size: 1.1rem;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.85rem;
+  }
+
+  .footer-col p {
+    font-size: 0.85rem;
+  }
+
+  .social-icons a {
+    font-size: 1rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-section {
+    padding: 30px 15px 0;
+  }
+
+  .footer-content {
+    gap: 15px;
+    padding-bottom: 30px;
+  }
+
+  .logo-img {
+    width: 60px;
+  }
+
+  .brand-title {
+    font-size: 1.4rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .download-title {
+    font-size: 0.95rem;
+  }
+
+  .download-desc {
+    font-size: 0.7rem;
+  }
+
+  .playstore-link {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .playstore-icon {
+    font-size: 0.95rem;
+  }
+
+  .footer-col h3 {
+    font-size: 1rem;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.8rem;
+  }
+
+  .footer-col p {
+    font-size: 0.8rem;
+  }
+
+  .social-icons a {
+    font-size: 0.95rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.85rem;
+    padding: 12px 0;
+  }
+}

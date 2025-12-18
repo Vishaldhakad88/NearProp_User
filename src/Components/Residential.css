@@ -1,0 +1,290 @@
+.residential .breadcrumb {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.residential h1 {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.residential .main-content {
+  display: flex;
+  gap: 20px;
+}
+
+.residential .property-listings {
+  flex: 3;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.residential .property-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.residential .property-image {
+  position: relative;
+}
+
+.residential .property-image img {
+  width: 100%;
+  display: block;
+}
+
+.residential .label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #28a745;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.residential .for-rent {
+  left: auto;
+  right: 10px;
+  background:darkcyan;
+}
+
+.residential .price {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.residential .property-details {
+  padding: 10px;
+}
+
+.residential .property-details h3 {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.residential .property-details p {
+  font-size: 12px;
+  color: #777;
+}
+
+.residential .icons {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: #555;
+  margin: 10px 0;
+}
+
+.residential .property-details button {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.residential .sidebar {
+  flex: 1;
+  
+}
+
+
+.residential-blog-right-sidebar {
+  width: 30%;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-left: 1px solid #ddd;
+  height: 100vh;
+  overflow-y:auto;
+  /* position: sticky; */
+  top: 0;
+}
+.residential-blog-right-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+    .residential-blog-right-sidebar  {
+display: none;
+}
+
+.blog-left-section {
+  width: 100%;
+ 
+}
+  
+}
+
+.residential .featured-listing,
+.residential .property-type,
+.residential .cities {
+  background: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.residential .featured-card img {
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.residential .featured-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.residential .property-type ul,
+.residential .cities ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.residential .property-type li,
+.residential .cities li {
+  margin-bottom: 8px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+
+@media (max-width: 767px) {
+  .resi {
+    width: 100% !important;
+  }
+}
+
+.active-tab {
+  font-weight: bold;
+  text-decoration: underline;
+  color: darkcyan;
+  text-decoration: none;
+}
+
+.recommend-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+}
+
+.recommend-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.recommend-content {
+  padding: 12px;
+}
+
+.recommend-content h5 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.recommend-location {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.recommend-price {
+  color: #007bff;
+  font-size: 15px;
+}
+
+.adlist-recommend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.adlist-recommend-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.adlist-recommend-card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.adlist-recommend-content {
+  padding: 15px;
+}
+
+.adlist-recommend-content h5 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.adlist-recommend-location {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.adlist-recommend-price {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.requestinfo-date-box {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.requestinfo-date-box.selected {
+  background-color: darkcyan; /* Blue background for selected date */
+  color: white;
+  border-color: #0056b3;
+}
+
+.requestinfo-date-box:hover {
+  background-color: #e9ecef;
+}
+
+.sidebar-container {
+  width: 100%;
+  max-width: 450px;  /* sidebar ka fixed max width */
+  overflow-x: hidden; /* horizontal scroll remove */
+  overflow-y: auto;   /* sirf vertical scroll allow */
+}
+
+.commercial-title{
+    font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin: 24px 20px;
+  text-align: left;
+}
+

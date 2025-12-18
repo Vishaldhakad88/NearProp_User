@@ -1,0 +1,517 @@
+.travel-slider {
+  position: relative;
+  width: 100%;
+  /* height: 100vh; */
+  overflow: hidden;
+  display: flex;
+  top:'120px';
+  align-items: center;
+  border-radius: 20px;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(65%);
+  transition: background-image 1s ease-in-out;
+  animation: zoomEffect 12s ease-in-out infinite alternate;
+}
+
+@keyframes zoomEffect {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.15);
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.category-buttons {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.category-btn {
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.category-btn.active,
+.category-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: #000;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  max-width: 1300px;
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+
+.left {
+  color: #fff;
+  align-self: center;
+}
+
+.title {
+  font-size: 1.6rem;   /* pehle bada tha, ab chhota */
+  font-weight: 600;
+  margin: 6px 0;
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.cards.fixed {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  position: relative;
+  width: 220px;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card.active {
+  transform: scale(1.1);
+}
+
+.card-info {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.card-info .tag {
+  font-size: 0.75rem;
+  color: #666;
+  background: rgba(255,255,255,0.8);
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.card-info h4 {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.95rem;
+ 
+  margin-bottom: 2px;
+  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+  
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card-info h4:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.card-info .tag {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.85;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .left {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .cards.fixed {
+    justify-content: center;
+  }
+
+  .card {
+    width: 160px;
+    height: 240px;
+  }
+
+}
+
+
+.category-buttons {
+  text-align: center;
+  margin: 20px 0;
+}
+.category-btn {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  color: #000;
+}
+.category-btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
+.tag {
+  background-color: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+.tag.featured {
+  background-color: #FFD700;
+  color: #000;
+}
+
+.category-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 0px;
+}
+
+.category-buttons .category-btn {
+  padding: 8px 5px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.category-buttons .category-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.category-buttons .category-btn.active {
+  background: rgba(255, 215, 0, 0.6);
+  color: black;
+  border: 1px solid gold;
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .left {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  /* 🔹 Cards ko horizontal scroll banaya */
+  .cards.fixed {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding: 10px;
+  }
+
+  /* 🔹 Har card ek slide banega */
+  .card {
+    flex: 0 0 85%;   /* ek card screen ka 85% lega */
+    max-width: 360px;
+    height: 300px;
+    border-radius: 18px;
+    scroll-snap-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease;
+  }
+
+  .card.active {
+    transform: scale(1.05);
+  }
+
+  .card img {
+    border-radius: 18px;
+  }
+
+  .card-info h4 {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 30px;
+  }
+
+  .card-info .tag {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+  }
+
+  /* 🔹 Category Buttons neat */
+  .category-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category-buttons .category-btn {
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 10px;
+  }
+
+  /* 🔹 Scrollbar hide for clean UI */
+  .cards.fixed::-webkit-scrollbar {
+    display: none;
+  }
+  .cards.fixed {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+
+
+@media (max-width: 1024px) {
+
+  .bottle-mobile-categories {
+   
+    position: relative;
+    /* top: -50px;   ❌ Yeh line hata do ya comment out kar do */
+  
+}
+
+.search-box {
+  margin-top: 50px;
+  position: absolute;
+  bottom: -00px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  max-width: 1200px;
+  /* background: white; */
+  padding: 30px;
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
+  border-radius: 10px;
+}
+
+
+
+  /* .welcome{
+    display: none;
+  } */
+
+  .bottle-mobile-categories {
+    /* agar neeche gap aa raha hai to hata do */
+  /* padding-bottom: 100; */
+  position: relative;
+  top: 120px;  /* jitna upar chahiye utna adjust karo */
+}
+
+.reder-form{
+  top: 200px;  /* jitna upar chahiye utna adjust karo */
+}
+
+
+  .bottle-categories-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #00695c;
+    margin-bottom: 10px;
+  }
+
+  .bottle-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+    gap: 8px; /* kam gap */
+    width: 100%;
+  }
+
+  .bottle-category-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 4px;      /* chhota padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+    justify-content: center;
+    min-height: 70px;      /* height kam */
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+    border: none;
+  }
+
+  .Discnear{
+    margin-top: 50px;
+  }
+
+   .touf2 {
+   
+margin-top: 500px;
+
+   }
+
+  .bottle-category-card.active {
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.15);
+    transform: scale(1.04);
+  }
+
+  .bottle-category-icon {
+    width: 28px;   /* chhota icon box */
+    height: 28px;
+    border-radius: 8px;
+    background: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    font-size: 14px; /* icon size chhota */
+  }
+
+  .bottle-category-label {
+    font-size: 11px;   /* chhota text */
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    line-height: 1.1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bottle-mobile-categories {
+    
+    display: none;
+  }
+  
+
+}
+
+
+/* ✅ Sirf mobile me hero ko card-style image banaye */
+
+
+
+/* ✅ Mobile & Tablet (up to 1024px) */
+@media (max-width: 1024px) {
+  .search-box {
+    position: relative; /* required for top to work */
+    top: 30px;
+  }
+}
+
+/* ✅ Desktop (1025px and up) — remove the top */
+@media (min-width: 1025px) {
+  .search-box {
+    top: 0;        /* or just unset it */
+    position: static; /* no offset positioning */
+  }
+@media (max-width: 768px) {
+  .search-box {
+    top: 0;        /* or just unset it */
+    position: static; /* no offset positioning */
+  }
+}
+}
+
+@media (max-width: 768px) {
+
+  .bottle-mobile-categories {
+   
+   margin-top: 20px;
+  
+}
+.reder-form{
+  margin-top: 90px;
+}
+
+}
+
+
+
+@media (min-width: 1800px) {
+.responsive-tabs{
+  margin-top: -190px;
+}
+}
+
+

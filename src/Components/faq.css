@@ -1,0 +1,154 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #1C2526; /* Darker shade for text readability */
+}
+
+/* FAQ Section */
+.faq-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Banner */
+.faq-banner {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6); /* Retained original banner gradient */
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.faq-banner h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* FAQ Container */
+.faq-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Selling and Renting FAQ Sections */
+.selling-faq,
+.renting-faq {
+  margin-bottom: 40px;
+}
+
+.selling-faq h2,
+.renting-faq h2 {
+  font-size: 1.75rem;
+  color: #008B8B; /* Dark cyan for headings */
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Accordion Styling */
+.accordion {
+  background: #E6F0FA; /* Light cyan background */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-item {
+  border: none;
+  margin-bottom: 10px;
+  background: transparent;
+}
+
+.accordion-header {
+  font-size: 1.1rem;
+}
+
+.accordion-button {
+  background: #fff;
+  color: #008B8B; /* Dark cyan for button text */
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.accordion-button:not(.collapsed) {
+  background: #00CED1; /* Lighter cyan when expanded */
+  color: #fff;
+}
+
+.accordion-button:focus {
+  box-shadow: 0 0 0 3px rgba(0, 139, 139, 0.3); /* Dark cyan focus ring */
+  outline: none;
+}
+
+.accordion-body {
+  background: #fff;
+  padding: 20px;
+  font-size: 1rem;
+  color: #1C2526;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faq-banner h1 {
+    font-size: 2rem;
+  }
+
+  .selling-faq h2,
+  .renting-faq h2 {
+    font-size: 1.5rem;
+  }
+
+  .accordion-button {
+    font-size: 1rem;
+    padding: 12px 15px;
+  }
+
+  .accordion-body {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-banner {
+    padding: 40px 15px;
+  }
+
+  .faq-banner h1 {
+    font-size: 1.75rem;
+  }
+
+  .faq-container {
+    padding: 15px;
+  }
+
+  .selling-faq h2,
+  .renting-faq h2 {
+    font-size: 1.25rem;
+  }
+
+  .accordion-button {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+
+  .accordion-body {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+}

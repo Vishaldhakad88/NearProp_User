@@ -1,0 +1,779 @@
+/* Section styling */
+.hrtc-agents-section {
+  text-align: center;
+  padding: 40px 15px;
+  background: #f9fafc;
+}
+
+.hrtc-section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.hrtc-section-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Agent Cards */
+.agentlist-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hrtc-agent-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hrtc-agent-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.hrtc-agent-img {
+  width: 80px;
+  height: 100px;
+  border-radius: 10px;
+  margin: 0 auto 12px;
+  object-fit: cover;
+  object-position: center;
+  background: #f0f0f0;
+  border: 3px solid #4cc9f0;
+  display: block;
+}
+
+.hrtc-agent-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.hrtc-agent-role {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.hrtc-agent-desc {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.hrtc-view-profile {
+  padding: 8px 16px;
+  background: #00bcd4;
+  color: #fff;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hrtc-view-profile:hover {
+  background: linear-gradient(45deg, #0072ff, #00c6ff);
+  transform: scale(1.05);
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  animation: zoomIn 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  color: #555;
+  cursor: pointer;
+  z-index: 1100;
+  transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+  color: #e63946;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+.modal-profile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.modal-img {
+  width: 90px;
+  height: 110px;
+  border-radius: 10px;
+  object-fit: cover;
+  object-position: center;
+  background: #f0f0f0;
+  border: 3px solid #0072ff;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.modal-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.modal-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  color: #222;
+}
+
+.verified-icon {
+  color: #00bcd4;
+  margin-left: 8px;
+}
+
+.modal-role {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.modal-email {
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+.modal-rating {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.star-icon {
+  color: #ffd700;
+  margin-right: 4px;
+  font-size: 0.9rem;
+}
+
+.star-icon.half {
+  position: relative;
+}
+
+.star-icon.half::before {
+  content: '\f089';
+  position: absolute;
+  left: 0;
+  overflow: hidden;
+  width: 50%;
+}
+
+.rating-text {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* FIXED: Modal Actions - All 3 buttons in same row, same size */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px;
+  gap: 10px; /* Equal spacing between buttons */
+  flex-wrap: wrap; /* Allow wrapping on very small screens */
+}
+
+.action-btn {
+  flex: 1; /* Equal width */
+  padding: 12px 16px; /* Uniform padding for same size */
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-sizing: border-box;
+  min-height: 42px; /* Fixed minimum height for uniformity */
+  max-height: 42px; /* Fixed maximum height */
+  text-align: center;
+  margin: 0; /* No extra margins */
+}
+
+.action-btn:hover {
+  transform: scale(1.02); /* Slight hover effect */
+}
+
+/* Button Colors */
+.email-btn {
+  background: #d32f2f; /* Red for Email */
+  /* REMOVED: margin-top: 16px; - This was causing the issue! */
+}
+
+.call-btn {
+  background: #388e3c; /* Green for Call */
+}
+
+.whatsapp-btn {
+  background: #25d366; /* WhatsApp Green */
+}
+
+.modal-tabs {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.tab-item.active {
+  color: #0072ff;
+  border-bottom: 2px solid #0072ff;
+}
+
+.tab-item:hover {
+  color: #0072ff;
+}
+
+.modal-tab-content {
+  width: 100%;
+  text-align: left;
+}
+
+.about-section, .reviews-section, .ticket-section {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.about-section h4, .reviews-section h4, .ticket-section h4 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.about-section p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.icon {
+  color: #0072ff;
+}
+
+.reviews-section .no-reviews {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.review-placeholder {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+}
+
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-input, .form-textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.submit-btn {
+  padding: 8px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #0056b3;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+}
+
+/* Search Bar */
+.agentlist-searchbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
+}
+
+.search-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+  font-size: 0.9rem;
+}
+
+.my-search-btn {
+  padding: 8px 16px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  min-width: 80px;
+}
+
+.my-search-btn:disabled {
+  background: #ccc;
+}
+
+/* Mobile Slider */
+.mobile-slider {
+  display: none;
+}
+
+/* Number Options Modal */
+.number-options-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  animation: fadeIn 0.3s ease;
+}
+
+.number-options-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.number-options-content h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+.number-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.number-option-btn {
+  display: block;
+  padding: 10px;
+  background: #0072ff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.number-option-btn:hover {
+  background: #0056b3;
+  transform: scale(1.03);
+}
+
+.number-options-content .modal-close {
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .agentlist-cards {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-slider {
+    display: block;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .hrtc-agent-card {
+    padding: 15px;
+    height: 280px;
+  }
+
+  .hrtc-agent-img {
+    width: 70px;
+    height: 90px;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center;
+    background: #f0f0f0;
+    margin: 0 auto 10px;
+  }
+
+  .hrtc-agent-name {
+    font-size: 1rem;
+  }
+
+  .hrtc-agent-role {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+
+  .hrtc-agent-desc {
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+  }
+
+  .hrtc-view-profile {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .agentlist-searchbar {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-select, .my-search-btn {
+    width: 100%;
+    max-width: 280px;
+    min-width: unset;
+  }
+
+  .modal-content {
+    padding: 15px;
+    max-height: 80vh;
+  }
+
+  .modal-close {
+    font-size: 20px;
+    top: 10px;
+    right: 12px;
+  }
+
+  .modal-title {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+
+  .modal-profile {
+    margin-bottom: 12px;
+  }
+
+  .modal-img {
+    width: 80px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center;
+    background: #f0f0f0;
+    margin-right: 12px;
+  }
+
+  .modal-name {
+    font-size: 1.2rem;
+  }
+
+  .modal-role {
+    font-size: 0.85rem;
+  }
+
+  .modal-email {
+    font-size: 0.8rem;
+  }
+
+  .modal-rating {
+    margin-top: 4px;
+  }
+
+  .star-icon {
+    font-size: 0.8rem;
+  }
+
+  .rating-text {
+    font-size: 0.75rem;
+  }
+
+  /* FIXED: Responsive buttons - Stack on small screens but same size */
+  .modal-actions {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .action-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    min-height: 40px;
+    max-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hrtc-section-title {
+    font-size: 1.5rem;
+  }
+
+  .hrtc-section-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .hrtc-agent-img {
+    width: 60px;
+    height: 80px;
+    border-radius: 6px;
+    object-fit: cover;
+    object-position: center;
+    background: #f0f0f0;
+    margin: 0 auto 8px;
+  }
+
+  .hrtc-agent-name {
+    font-size: 0.95rem;
+  }
+
+  .hrtc-agent-role {
+    font-size: 0.75rem;
+  }
+
+  .hrtc-agent-desc {
+    font-size: 0.7rem;
+  }
+
+  .hrtc-view-profile {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  .modal-content {
+    padding: 12px;
+    max-height: 80vh;
+  }
+
+  .modal-close {
+    font-size: 18px;
+    top: 8px;
+    right: 10px;
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+
+  .modal-img {
+    width: 70px;
+    height: 90px;
+    border-radius: 6px;
+    object-fit: cover;
+    object-position: center;
+    background: #f0f0f0;
+    margin-right: 10px;
+  }
+
+  .modal-name {
+    font-size: 1.1rem;
+  }
+
+  .modal-role {
+    font-size: 0.8rem;
+  }
+
+  .modal-email {
+    font-size: 0.75rem;
+  }
+
+  .star-icon {
+    font-size: 0.75rem;
+  }
+
+  .rating-text {
+    font-size: 0.7rem;
+  }
+
+  /* FIXED: On very small screens, buttons stack vertically but remain equal */
+  .modal-actions {
+    flex-direction: column; /* Stack vertically on tiny screens */
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .action-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 38px;
+    max-height: 38px;
+    width: 100%; /* Full width when stacked */
+  }
+
+  .tab-item {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+  }
+
+  .about-section h4, .reviews-section h4, .ticket-section h4 {
+    font-size: 0.85rem;
+  }
+
+  .about-section p {
+    font-size: 0.75rem;
+  }
+
+  .reviews-section .no-reviews {
+    font-size: 0.8rem;
+  }
+
+  .review-placeholder {
+    font-size: 0.7rem;
+  }
+
+  .ticket-form {
+    gap: 5px;
+  }
+
+  .form-input, .form-textarea {
+    font-size: 0.75rem;
+    padding: 5px;
+  }
+
+  .form-textarea {
+    min-height: 60px;
+  }
+
+  .submit-btn {
+    font-size: 0.75rem;
+    padding: 5px;
+  }
+
+  .number-options-content {
+    width: 90%;
+    max-width: 280px;
+  }
+
+  .number-options-content h4 {
+    font-size: 1rem;
+  }
+
+  .number-option-btn {
+    font-size: 0.85rem;
+    padding: 7px;
+  }
+}
