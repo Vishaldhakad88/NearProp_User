@@ -528,7 +528,7 @@ function LandingPage() {
     <form className="search-form" onSubmit={handleSearch}>
       <div className="form-grid">
         <div className='search-form-container'>
-          <label className="looking" style={{ fontSize: '13px' }}>LOOKING FOR</label>
+          <label className="looking" style={{ fontSize: '13px' }}>LOOKIN G FOR</label>
           <select name="propertyType" className="search-select" value={formData.propertyType} onChange={handleFormChange} disabled={isLoading}>
             <option value="">Select Property</option>
             <option value="APARTMENT">Apartment</option>
@@ -554,7 +554,7 @@ function LandingPage() {
           cities={cities}
         />
 
-        {formData.propertyType && formData.propertyType !== 'PLOT' ? (
+        {/* {formData.propertyType && formData.propertyType !== 'PLOT' ? (
           <div>
             <label className="property" style={{ fontSize: '13px' }}>BEDROOMS</label>
             <select
@@ -605,7 +605,60 @@ function LandingPage() {
               <option value="4">4+ BHK</option>
             </select>
           </div>
-        )}
+        )} */}
+
+
+        {/* Conditional Field after City */}
+{formData.propertyType ? (
+  <>
+    {['APARTMENT', 'VILLA', 'SINGLE_FAMILY_HOME', 'MULTI_FAMILY_HOME', 'STUDIO'].includes(formData.propertyType) && (
+      <div>
+        <label className="property" style={{ fontSize: '13px' }}>BEDROOMS</label>
+        <select
+          name="bedrooms"
+          className="search-select"
+          value={formData.bedrooms}
+          onChange={handleFormChange}
+          disabled={isLoading}
+        >
+          <option value="">Select Bedrooms</option>
+          <option value="1">1 BHK</option>
+          <option value="2">2 BHK</option>
+          <option value="3">3 BHK</option>
+          <option value="4">4+ BHK</option>
+        </select>
+      </div>
+    )}
+
+    {formData.propertyType === 'PLOT' && (
+      <div>
+        <label className="property" style={{ fontSize: '13px' }}>AREA RANGE (Sq Ft)</label>
+        <select
+          name="areaRange"
+          className="search-select"
+          value={formData.areaRange || ''}
+          onChange={handleFormChange}
+          disabled={isLoading}
+        >
+          <option value="">Select Area Range</option>
+          <option value="500-1000">500-1000 Sq Ft</option>
+          <option value="1000-2000">1000-2000 Sq Ft</option>
+          <option value="2000-5000">2000-5000 Sq Ft</option>
+          <option value="5000-10000">5000-10000 Sq Ft</option>
+        </select>
+      </div>
+    )}
+  </>
+) : (
+  <div>
+    <label className="property" style={{ fontSize: '13px', color: '#888' }}>
+      FIRST SELECT PROPERTY TYPE
+    </label>
+    <select className="search-select" disabled style={{ backgroundColor: '#f5f5f5', color: '#aaa' }}>
+      <option value="">— Choose property first —</option>
+    </select>
+  </div>
+)}
         <div>
           <label className="property" style={{ fontSize: '13px' }}>PRICE RANGE</label>
           <select

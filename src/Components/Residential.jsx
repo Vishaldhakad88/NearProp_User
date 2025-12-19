@@ -648,7 +648,7 @@ function Residential() {
                 </select>
               </div>
 
-              <div className="filter-group">
+              {/* <div className="filter-group">
                 <label className="filter-label">District</label>
                 <select
                   value={selectedDistrict}
@@ -662,7 +662,7 @@ function Residential() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               <div className="filter-group">
                 <label className="filter-label">City</label>

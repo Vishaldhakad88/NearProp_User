@@ -460,10 +460,11 @@ function PgAndHostelDetails() {
 
   if (loading) {
     return (
-      <div className="spinner">
-        <div className="spinner-icon"></div>
-        <p>Loading property details...</p>
-      </div>
+      // <div className="spinner">
+      //   {/* <div className="spinner-icon"></div> */}
+      //   {/* <p>Loading property details...</p> */}
+      // </div>
+      <>Loading..</>
     );
   }
 
