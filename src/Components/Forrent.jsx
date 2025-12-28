@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,6 +18,7 @@ import Apartment3 from '../assets/apartment.avif';
 import Apartment4 from '../assets/studio.jpg';
 import Apartment6 from '../assets/penthouse.avif';
 import Apartment7 from '../assets/villa.avif';
+import AuthError from "../Components/AuthError";
 
 const fallbackImages = [Apartment, Apartment2, Apartment3, Apartment4, Apartment6, Apartment7];
 
@@ -66,6 +67,92 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
   return isNaN(distance) ? null : Number(distance.toFixed(2));
 };
 
+// Searchable Dropdown Component (State & City के लिए)
+const SearchableDropdown = ({ options, value, onChange, placeholder, disabled = false }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedLabel = options.find(opt => opt.value === value)?.label || '';
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={wrapperRef} style={{ position: 'relative', width: '100%' }}>
+      <input
+        type="text"
+        value={isOpen ? searchTerm : selectedLabel}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setIsOpen(true)}
+        onClick={() => setIsOpen(true)}
+        placeholder={selectedLabel || placeholder}
+        disabled={disabled}
+        style={{
+          width: "100%",
+          padding: "8px",
+          border: "1px solid #e2e8f0",
+          borderRadius: "6px",
+          fontSize: "0.875rem",
+        }}
+        readOnly={false}
+      />
+      {isOpen && (
+        <div style={{
+          position: "absolute",
+          zIndex: 50,
+          marginTop: "4px",
+          width: "100%",
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: "6px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          maxHeight: "200px",
+          overflow: "auto",
+        }}>
+          {filteredOptions.length === 0 ? (
+            <div style={{ padding: "8px", color: "#718096", fontSize: "0.875rem" }}>
+              No options found
+            </div>
+          ) : (
+            filteredOptions.map((option) => (
+              <div
+                key={option.value}
+                onClick={() => {
+                  onChange({ target: { value: option.value } });
+                  setSearchTerm('');
+                  setIsOpen(false);
+                }}
+                style={{
+                  padding: "8px",
+                  cursor: "pointer",
+                  fontSize: "0.875rem",
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = "#ebf8ff"}
+                onMouseLeave={(e) => e.target.style.backgroundColor = "#ffffff"}
+              >
+                {option.label}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 function ForRent() {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
@@ -73,6 +160,8 @@ function ForRent() {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [showAuthError, setShowAuthError] = useState(false);
+
 
   // Sidebar filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -142,12 +231,18 @@ function ForRent() {
         } else {
           throw new Error(data.message || "API error");
         }
-      } catch (err) {
-        console.error("Fetch properties error:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+     } catch (err) {
+  console.error("Fetch properties error:", err.message);
+
+  if (err.message === "Authentication failed. Please log in again.") {
+    setShowAuthError(true);
+  } else {
+    setError(err.message);
+  }
+} finally {
+  setLoading(false);
+}
+
     };
 
     fetchProperties();
@@ -368,7 +463,8 @@ function ForRent() {
   ]);
 
   if (loading) return <div style={{ padding: "20px" }}>Loading properties for rent…</div>;
-  if (error) return <div style={{ padding: "20px", color: "#dc3545" }}>Error: {error}</div>;
+if (error && !showAuthError)
+  return <div className="p-4 text-danger">Error: {error}</div>;
 
   return (
     <div>
@@ -655,7 +751,7 @@ function ForRent() {
                 Filter Properties For Rent
               </h3>
 
-              {/* 🔹 Location Filters */}
+              {/* 🔹 State - Searchable */}
               <div style={{ marginBottom: "15px" }}>
                 <label
                   style={{
@@ -668,27 +764,16 @@ function ForRent() {
                 >
                   State
                 </label>
-                <select
+                <SearchableDropdown
+                  options={states.map(s => ({ value: s, label: s }))}
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">All States</option>
-                  {states.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="All States"
+                />
               </div>
 
-              <div style={{ marginBottom: "15px" }}>
+              {/* District commented as in original */}
+              {/* <div style={{ marginBottom: "15px" }}>
                 <label
                   style={{
                     fontSize: "0.875rem",
@@ -718,8 +803,9 @@ function ForRent() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
+              {/* 🔹 City - Searchable */}
               <div style={{ marginBottom: "15px" }}>
                 <label
                   style={{
@@ -732,24 +818,13 @@ function ForRent() {
                 >
                   City
                 </label>
-                <select
+                <SearchableDropdown
+                  options={filteredCities.map(c => ({ value: c, label: c }))}
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">All Cities</option>
-                  {filteredCities.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="All Cities"
+                  disabled={filteredCities.length === 0}
+                />
               </div>
 
               {/* Existing Filters */}
@@ -918,6 +993,11 @@ function ForRent() {
           </aside>
         </div>
       </div>
+      <AuthError
+  open={showAuthError}
+  onClose={() => setShowAuthError(false)}
+/>
+
     </div>
   );
 }

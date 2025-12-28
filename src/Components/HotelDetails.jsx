@@ -617,10 +617,10 @@ const HotelDetails = () => {
                   className={`landing-overlay-icons-i ${viewMode === 'location' ? 'active' : ''}`}
                   onClick={() => setViewMode('location')}
                 />
-                <FontAwesomeIcon
+                {/* <FontAwesomeIcon
                   icon={faHeart}
                   className="landing-overlay-icons-i"
-                />
+                /> */}
                 <FontAwesomeIcon
                   icon={faShare}
                   className="landing-overlay-icons-i"

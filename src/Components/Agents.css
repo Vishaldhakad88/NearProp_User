@@ -171,12 +171,15 @@ body {
 
 .nearprop-agent-photo {
   width: 50%;
-  /* max-width: 350px; */
+  max-width: 260px;
   height: 250px;
   object-fit: cover;
   border-radius: 6px;
-  margin-right: 20px;
+  padding: 20px;
+  display: block;
+  margin: auto;   /* 🔥 top, bottom, left, right all center */
 }
+
 
 .nearprop-agent-info {
   /* width: 1000px; */

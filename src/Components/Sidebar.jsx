@@ -1267,8 +1267,8 @@ const isBasicPlan = planName.startsWith("basic");
   {/* Send Button */}
   <button
     onClick={toggleChatModal}
-    className="action-button message"
-    disabled={isGuest}
+    style={{justifyContent: "center", flex: 1, display: "flex", alignItems: "center", gap: "6px"}}
+    // disabled={isGuest}
     
   >
     <FontAwesomeIcon icon={faMessage} />
@@ -1691,7 +1691,55 @@ const isBasicPlan = planName.startsWith("basic");
                 </div>
               </div>
             ) : (
-              <p className="text-center">No advertisement available for {districtName}</p>
+              <div className="ad-container">
+                <div className="ad-image-wrapper">
+                  <img
+                    src="https://agentrealestateschools.com/wp-content/uploads/2021/11/real-estate-property.jpg"
+                    alt="Real Estate Opportunities"
+                    className="ad-image"
+                    onError={(e) => { e.target.src = DEFAULT_AD_IMAGE; }}
+                  />
+                </div>
+                <div className="ad-content">
+                  <h5 className="ad-title">Real Estate Opportunities</h5>
+                  <p className="ad-description">Looking for exclusive property deals? Contact us for the best real estate investments.</p>
+                  <div className="ad-contact-icons">
+                    <a
+                      href="tel:+919155105666"
+                      className="call"
+                      aria-label="Call advertisement contact"
+                    >
+                      <FontAwesomeIcon icon={faPhone} />
+                    </a>
+                    <a
+                      href="https://wa.me/919155105666"
+                      className="whatsapp"
+                      target="_blank"
+                      aria-label="WhatsApp advertisement contact"
+                    >
+                      <FontAwesomeIcon icon={faWhatsapp} />
+                    </a>
+                    <a
+                      href="mailto:mail.nearprop@gmail.com?subject=Inquiry about Real Estate Opportunities"
+                      className="mail"
+                    >
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </a>
+                    <a href="https://nearprop.com" className="website" target="_blank">
+                      <FontAwesomeIcon icon={faGlobe} />
+                    </a>
+                    <a href="https://instagram.com/nearprop" className="instagram" target="_blank">
+                      <FontAwesomeIcon icon={faInstagram} />
+                    </a>
+                    <a href="https://facebook.com/nearprop" className="facebook" target="_blank">
+                      <FontAwesomeIcon icon={faFacebookF} />
+                    </a>
+                    <a href="https://youtube.com/nearprop" className="youtube" target="_blank">
+                      <FontAwesomeIcon icon={faYoutube} />
+                    </a>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -24,6 +24,7 @@ import {
   FaHome,
   FaCheckCircle,
   FaTools,
+  FaEye,
 } from "react-icons/fa";
 import villa1 from "../assets/villa-1.avif";
 import villa2 from "../assets/villa-2.avif";
@@ -55,6 +56,12 @@ function Developer() {
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  // Searchable dropdown state
+  const [stateSearch, setStateSearch] = useState("");
+  const [districtSearch, setDistrictSearch] = useState("");
+  const [showStateDropdown, setShowStateDropdown] = useState(false);
+  const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
 
   // Dummy data for developers
   const dummyDevelopers = [
@@ -266,6 +273,15 @@ function Developer() {
     setReviewCount(0);
   };
 
+  // Filtered lists for searchable dropdown
+  const filteredStates = states.filter(s =>
+    s.toLowerCase().includes(stateSearch.toLowerCase())
+  );
+
+  const filteredDistrictList = filteredDistricts.map(d => d.name || d.district).filter(d =>
+    d.toLowerCase().includes(districtSearch.toLowerCase())
+  );
+
   // Do not render content if not authenticated
   const token = getToken();
   if (!token) {
@@ -338,7 +354,7 @@ function Developer() {
                     <hr />
                     <div className="nearprop-row">
                       <span>Profile</span>
-                      <label onClick={() => openDeveloperModal(developer)}>View</label>
+                      <label onClick={() => openDeveloperModal(developer)}><FaEye /></label>
                     </div>
                   </div>
                 </div>
@@ -357,36 +373,96 @@ function Developer() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <div className="filter-group">
+
+            {/* State - Searchable Dropdown */}
+            <div className="filter-group position-relative">
               <label className="filter-label">State</label>
-              <select
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                className="filter-select"
+              <div
+                className="filter-select d-flex align-items-center justify-content-between cursor-pointer"
+                onClick={() => setShowStateDropdown(!showStateDropdown)}
               >
-                <option value="">All States</option>
-                {states.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+                <span>{selectedState || "Please select"}</span>
+                <span>▼</span>
+              </div>
+              {showStateDropdown && (
+                <div className="position-absolute w-100 bg-white border rounded shadow mt-1" style={{ zIndex: 1000, maxHeight: "300px", overflowY: "auto" }}>
+                  <input
+                    type="text"
+                    placeholder="Search state..."
+                    value={stateSearch}
+                    onChange={(e) => setStateSearch(e.target.value)}
+                    className="filter-input border-0 border-bottom"
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div>
+                    {filteredStates.length === 0 ? (
+                      <div className="p-2 text-muted">No states found</div>
+                    ) : (
+                      filteredStates.map((s) => (
+                        <div
+                          key={s}
+                          className="p-2 hover-bg-light cursor-pointer"
+                          onClick={() => {
+                            setSelectedState(s);
+                            setShowStateDropdown(false);
+                            setStateSearch("");
+                          }}
+                        >
+                          {s}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="filter-group">
+
+            {/* District - Searchable Dropdown */}
+            <div className="filter-group position-relative">
               <label className="filter-label">District</label>
-              <select
-                value={selectedDistrict}
-                onChange={(e) => setSelectedDistrict(e.target.value)}
-                className="filter-select"
+              <div
+                className="filter-select d-flex align-items-center justify-content-between cursor-pointer"
+                onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                style={{ opacity: !selectedState ? 0.6 : 1 }}
               >
-                <option value="">All Districts</option>
-                {filteredDistricts.map((d) => (
-                  <option key={d.district} value={d.district}>
-                    {d.district}
-                  </option>
-                ))}
-              </select>
+                <span>{selectedDistrict || "Please select"}</span>
+                <span>▼</span>
+              </div>
+              {showDistrictDropdown && (
+                <div className="position-absolute w-100 bg-white border rounded shadow mt-1" style={{ zIndex: 1000, maxHeight: "300px", overflowY: "auto" }}>
+                  <input
+                    type="text"
+                    placeholder="Search district..."
+                    value={districtSearch}
+                    onChange={(e) => setDistrictSearch(e.target.value)}
+                    className="filter-input border-0 border-bottom"
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div>
+                    {filteredDistrictList.length === 0 ? (
+                      <div className="p-2 text-muted">No districts found</div>
+                    ) : (
+                      filteredDistrictList.map((d) => (
+                        <div
+                          key={d}
+                          className="p-2 hover-bg-light cursor-pointer"
+                          onClick={() => {
+                            setSelectedDistrict(d);
+                            setShowDistrictDropdown(false);
+                            setDistrictSearch("");
+                          }}
+                        >
+                          {d}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+
             <button className="search-btn" onClick={applyFilters}>Search Developer</button>
           </div>
           <div className="widget">
@@ -664,6 +740,12 @@ function Developer() {
         </div>
       )}
       <ToastContainer />
+
+      {/* Additional CSS */}
+      <style jsx>{`
+        .cursor-pointer { cursor: pointer; }
+        .hover-bg-light:hover { background-color: #f8f9fa; }
+      `}</style>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "./agents.css";
@@ -23,6 +23,7 @@ import {
   FaMapMarkerAlt,
   FaHome,
   FaCheckCircle,
+  FaEye,
 } from "react-icons/fa";
 import villa1 from "../assets/villa-1.avif";
 import villa2 from "../assets/villa-2.avif";
@@ -280,6 +281,65 @@ function Agent() {
     }
   };
 
+  // Searchable Dropdown Component
+  const SearchableDropdown = ({ options, value, onChange, placeholder }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const wrapperRef = useRef(null);
+
+    const filteredOptions = options.filter(option =>
+      option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const selectedLabel = options.find(opt => opt.value === value)?.label || '';
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+      <div ref={wrapperRef} className="relative">
+        <input
+          type="text"
+          value={isOpen ? searchTerm : selectedLabel}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onFocus={() => setIsOpen(true)}
+          onClick={() => setIsOpen(true)}
+          placeholder={selectedLabel || placeholder}
+          className="filter-select"
+          readOnly={false}
+        />
+        {isOpen && (
+          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            {filteredOptions.length === 0 ? (
+              <div className="p-2 text-gray-500 text-sm">No options found</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <div
+                  key={option.value}
+                  onClick={() => {
+                    onChange({ target: { value: option.value } });
+                    setSearchTerm('');
+                    setIsOpen(false);
+                  }}
+                  className="p-2 hover:bg-blue-100 cursor-pointer text-sm"
+                >
+                  {option.label}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Do not render content if not authenticated
   const token = getToken();
   if (!token) {
@@ -355,7 +415,7 @@ function Agent() {
                     <hr />
                     <div className="nearprop-row">
                       <span>Profile</span>
-                      <label onClick={() => openDeveloperModal(developer)}>View</label>
+                      <label onClick={() => openDeveloperModal(developer)}><FaEye /></label>
                     </div>
                   </div>
                 </div>
@@ -376,33 +436,22 @@ function Agent() {
             />
             <div className="filter-group">
               <label className="filter-label">State</label>
-              <select
+              <SearchableDropdown
+                options={states.map(s => ({ value: s, label: s }))}
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">All States</option>
-                {states.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+                placeholder="All States"
+              />
             </div>
             <div className="filter-group">
               <label className="filter-label">District</label>
-              <select
+              <SearchableDropdown
+                options={filteredDistricts.map(d => ({ value: d.name || d.district, label: d.name || d.district }))}
                 value={selectedDistrict}
                 onChange={(e) => setSelectedDistrict(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">All Districts</option>
-                {filteredDistricts.map((d) => (
-                  <option key={d.district} value={d.district}>
-                    {d.district}
-                  </option>
-                ))}
-              </select>
+                placeholder="All Districts"
+                disabled={filteredDistricts.length === 0}
+              />
             </div>
             <button className="search-btn" onClick={applyFilters}>Search Developer</button>
           </div>

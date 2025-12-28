@@ -376,8 +376,7 @@
 
 // export default Login;
 
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -404,6 +403,10 @@ function Login({ onLoginSuccess }) {
   const [showResendLink, setShowResendLink] = useState(false);
   const navigate = useNavigate();
 
+  // Refs for input fields
+  const mobileInputRef = useRef(null);
+  const otpInputRef = useRef(null);
+
   const baseurl = `${API_CONFIG.baseUrl}/${API_CONFIG.apiPrefix}`;
 
   const countryCodes = [
@@ -420,6 +423,11 @@ function Login({ onLoginSuccess }) {
   useEffect(() => {
     const info = `${navigator.platform} - ${navigator.userAgent}`;
     setDeviceInfo(info);
+    
+    // Auto-focus on mobile number input when component mounts
+    if (mobileInputRef.current) {
+      mobileInputRef.current.focus();
+    }
   }, []);
 
   useEffect(() => {
@@ -483,6 +491,13 @@ function Login({ onLoginSuccess }) {
         position: 'top-right',
         autoClose: 3000,
       });
+      
+      // Auto-focus on OTP input after successful OTP send
+      setTimeout(() => {
+        if (otpInputRef.current) {
+          otpInputRef.current.focus();
+        }
+      }, 100);
     } catch (error) {
       if (error.response && error.response.status === 400) {
         showError('User not registered. Please sign up first.');
@@ -501,6 +516,12 @@ function Login({ onLoginSuccess }) {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleLogin();
+    }
+  };
+
+  const handleOtpKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleVerifyOtp();
     }
   };
 
@@ -537,6 +558,13 @@ function Login({ onLoginSuccess }) {
         position: 'top-right',
         autoClose: 3000,
       });
+      
+      // Auto-focus on OTP input after resend
+      setTimeout(() => {
+        if (otpInputRef.current) {
+          otpInputRef.current.focus();
+        }
+      }, 100);
     } catch (error) {
       if (error.response && error.response.status === 400) {
         showError('User not registered. Please sign up first.');
@@ -644,6 +672,7 @@ function Login({ onLoginSuccess }) {
                     ))}
                   </select>
                   <input
+                    ref={mobileInputRef}
                     type="tel"
                     placeholder="Mobile Number"
                     className={`welcome-username ${mobileError ? 'error-input' : ''}`}
@@ -669,12 +698,14 @@ function Login({ onLoginSuccess }) {
             <div className="welcome-input-group">
               <label>OTP</label>
               <input
+                ref={otpInputRef}
                 type="text"
                 placeholder="Enter your OTP"
                 className="welcome-password"
                 maxLength="6"
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ''))}
+                onKeyPress={handleOtpKeyPress}
               />
               <div className="resend-timer">
                 {resendCountdown > 0 ? (
@@ -711,7 +742,6 @@ function Login({ onLoginSuccess }) {
       {showErrorDialog && (
         <div className="error-dialog">
           <div className="error-dialog-content">
-            <h3>Error</h3>
             <p>{errorMessage}</p>
             <button onClick={closeErrorDialog} className="error-dialog-button">
               OK

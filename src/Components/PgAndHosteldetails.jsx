@@ -11,11 +11,11 @@ import {
   faShare,
   faPhone,
   faComment,
-  faEnvelope, // Added to fix the faEnvelope error
+  faEnvelope,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp, faInstagram, faFacebook, faYoutube, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import axios from 'axios';
-import HotelSidebar from './HotelSidebar'; // Import the HotelSidebar component
+import HotelSidebar from './HotelSidebar';
 import './PgAndHostelDetails.css';
 
 const API_CONFIG = {
@@ -24,9 +24,32 @@ const API_CONFIG = {
   privateApiPrefix: 'api',
 };
 
+// Advertisement API Config - HotelSidebar से बिल्कुल same
+const AD_API_CONFIG = {
+  baseUrl: 'https://api.nearprop.com',
+  apiPrefix: 'api/v1',
+};
+
+// Fallback Ad - HotelSidebar से same
+const FALLBACK_AD = [
+  {
+    id: 1,
+    title: "Luxury Hotel in Ujjain",
+    description: "Experience a luxurious stay with world-class amenities and scenic views",
+    bannerImageUrl: "/hotel.jpg",
+    phoneNumber: "+91 91551 05666",
+    whatsappNumber: "+91 91551 05666",
+    emailAddress: "bookings@ujjainhotel.com",
+    targetLocation: "Ujjain",
+    validUntil: "2025-12-31T23:59:59",
+    createdBy: { name: "Hotel Administrator" },
+  },
+];
+
+const DEFAULT_AD_IMAGE = '/assets/default-hotel-ad.png';
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const DEFAULT_AVATAR = '/assets/default-avatar.png';
-const DUMMY_AD_IMAGE = '/apartment.avif';
+
 const DEFAULT_PROPERTY = {
   id: '',
   propertyId: 'N/A',
@@ -48,24 +71,6 @@ const DEFAULT_PROPERTY = {
   createdAt: 'N/A',
   owner: { name: 'Unknown Agent', phone: 'N/A', avatar: DEFAULT_AVATAR },
 };
-
-// Inline mock ad data
-const mockAdData = [
-  {
-    id: 14,
-    title: "Best Deal on Highway Plot Sale – Ujjain",
-    description: "Grab the opportunity to own a premium residential/commercial plot on Ujjain Highway Road. Limited plots available at attractive prices.",
-    bannerImageUrl: "https://my-nearprop-bucket.s3.ap-south-1.amazonaws.com/advertisements/media/advertisements/admin/18_rohit-gurjar/best-deal-on-highway-plot-sale-ujjain/images/best-deal-on-highway-plot-sale-ujjain-1fd10dbf-6ff5-4677-91ad-9d6bbda60866.jpg",
-    phoneNumber: "6265861847",
-    emailAddress: "rohitkiaaan@gmail.com",
-    facebookUrl: "https://www.facebook.com/profile.php?id=100085421884918",
-    instagramUrl: "https://www.instagram.com/saim_7024?igsh=MXF6M2w5aXJ5Y3F4Zw==",
-    youtubeUrl: "https://youtu.be/upU0OcE658E?si=yZs8jnCXx5Qm8jpD",
-    linkedinUrl: "https://linkedin.com/company/ujjainplots",
-    additionalInfo: "✅ Highway Touch | ✅ EMI Available | ✅ Registry Ready",
-    createdBy: { name: "Rohit Gurjar" },
-  },
-];
 
 function ErrorBoundary({ children }) {
   const [hasError, setHasError] = useState(false);
@@ -106,9 +111,11 @@ function PgAndHostelDetails() {
   const [newRating, setNewRating] = useState(0);
   const [newReview, setNewReview] = useState('');
   const [newComment, setNewComment] = useState('');
-  const [advertisements, setAdvertisements] = useState(mockAdData);
+
+  // Advertisement states - अब real API से
+  const [advertisements, setAdvertisements] = useState([]);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [adsLoading, setAdsLoading] = useState(false); // Initialized to false since using mock data
+  const [adsLoading, setAdsLoading] = useState(true);
   const [adsError, setAdsError] = useState(null);
 
   const validateToken = (token) => {
@@ -159,6 +166,53 @@ function PgAndHostelDetails() {
     }
   };
 
+  // Advertisement fetch - HotelSidebar से same logic
+  const fetchAdvertisements = async (districtName) => {
+    try {
+      setAdsLoading(true);
+      setAdsError(null);
+      const token = getToken()?.token;
+      const cleanedDistrict = (districtName || 'Ujjain').replace(/[^a-zA-Z\s]/g, '');
+
+      const response = await axios.get(
+        `${AD_API_CONFIG.baseUrl}/${AD_API_CONFIG.apiPrefix}/advertisements`,
+        {
+          params: {
+            page: 0,
+            size: 10,
+            sortBy: "createdAt",
+            direction: "DESC",
+            targetLocation: cleanedDistrict,
+            type: 'hotel',
+          },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
+
+      let ads = response.data.content || response.data;
+      const filteredAds = ads.filter(ad => 
+        ad.targetLocation?.toLowerCase() === cleanedDistrict.toLowerCase()
+      );
+
+      if (filteredAds.length === 0) {
+        console.warn(`No hotel advertisements found for district: ${cleanedDistrict}`);
+        setAdvertisements(FALLBACK_AD);
+        setAdsError(`No hotel advertisements available for ${cleanedDistrict}.`);
+      } else {
+        setAdvertisements(filteredAds);
+      }
+    } catch (err) {
+      console.error('Advertisement fetch error:', err.message);
+      setAdsError(`Failed to load hotel advertisements: ${err.message}`);
+      setAdvertisements(FALLBACK_AD);
+    } finally {
+      setAdsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -205,9 +259,12 @@ function PgAndHostelDetails() {
             name: propData.landlord?.name || DEFAULT_PROPERTY.owner.name,
             phone: propData.landlord?.contactNumber || DEFAULT_PROPERTY.owner.phone,
             avatar: propData.landlord?.profilePhoto || DEFAULT_PROPERTY.owner.avatar,
-            whatsapp: propData.landlord?.whatsapp || DEFAULT_PROPERTY.owner.phone, // Added for HotelSidebar
+            whatsapp: propData.landlord?.whatsapp || propData.landlord?.contactNumber || DEFAULT_PROPERTY.owner.phone,
           },
         });
+
+        // Fetch ads based on city
+        fetchAdvertisements(propData.location?.city);
 
         const ratingsParams = new URLSearchParams({
           page: '1',
@@ -443,11 +500,6 @@ function PgAndHostelDetails() {
     });
   };
 
-  const handleAdClick = () => {
-    navigate('/pg-and-hostels');
-  };
-
-  // Map property to propertydata for HotelSidebar
   const propertyData = {
     price: property.lowestPrice,
     type: property.type,
@@ -459,13 +511,7 @@ function PgAndHostelDetails() {
   };
 
   if (loading) {
-    return (
-      // <div className="spinner">
-      //   {/* <div className="spinner-icon"></div> */}
-      //   {/* <p>Loading property details...</p> */}
-      // </div>
-      <>Loading..</>
-    );
+    return <>Loading..</>;
   }
 
   if (error) {
@@ -517,12 +563,14 @@ function PgAndHostelDetails() {
           }
 
           .ad-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            padding: 8px 0;
-          }
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 🔥 text top se start hoga */
+  align-items: flex-start;     /* 🔥 left aligned rahega */
+  height: 100%;
+  padding: 8px 0;
+}
+
 
           .ad-title {
             font-size: 1.5rem;
@@ -873,81 +921,221 @@ function PgAndHostelDetails() {
               </div>
             </div>
 
-            <div className="advertisement-section">
-              <h2>Advertisements</h2>
-              {adsLoading && (
-                <div className="spinner text-center">
-                  <div className="spinner-icon"></div>
-                  <p>Loading advertisements...</p>
-                </div>
-              )}
-              {adsError && <p className="error-text">{adsError}</p>}
-              {!adsLoading && !adsError && advertisements.length === 0 && (
-                <p>No advertisements available for {property.city || 'this district'}.</p>
-              )}
-              {!adsLoading && !adsError && advertisements.length > 0 && (
-                <div key={advertisements[currentAdIndex].id} className="ad-container">
-                  <img
-                    src={advertisements[currentAdIndex].bannerImageUrl}
-                    alt={advertisements[currentAdIndex].title}
-                    className="ad-image"
-                    onError={(e) => { e.target.src = PLACEHOLDER_IMAGE; }}
-                  />
-                  <div className="ad-content">
-                    <h3 className="ad-title">{advertisements[currentAdIndex].title}</h3>
-                    <p className="ad-description">{advertisements[currentAdIndex].description}</p>
-                    <div className="ad-contact-icons">
-                      {advertisements[currentAdIndex].phoneNumber && (
-                        <a href={`tel:${advertisements[currentAdIndex].phoneNumber}`} title="Call">
-                          <FontAwesomeIcon icon={faPhone} />
-                        </a>
-                      )}
-                      {advertisements[currentAdIndex].emailAddress && (
-                        <a href={`mailto:${advertisements[currentAdIndex].emailAddress}`} title="Email">
-                          <FontAwesomeIcon icon={faEnvelope} />
-                        </a>
-                      )}
-                      {advertisements[currentAdIndex].facebookUrl && (
-                        <a href={advertisements[currentAdIndex].facebookUrl} target="_blank" rel="noopener noreferrer" title="Facebook">
-                          <FontAwesomeIcon icon={faFacebook} />
-                        </a>
-                      )}
-                      {advertisements[currentAdIndex].instagramUrl && (
-                        <a href={advertisements[currentAdIndex].instagramUrl} target="_blank" rel="noopener noreferrer" title="Instagram">
-                          <FontAwesomeIcon icon={faInstagram} />
-                        </a>
-                      )}
-                      {advertisements[currentAdIndex].youtubeUrl && (
-                        <a href={advertisements[currentAdIndex].youtubeUrl} target="_blank" rel="noopener noreferrer" title="YouTube">
-                          <FontAwesomeIcon icon={faYoutube} />
-                        </a>
-                      )}
-                      {advertisements[currentAdIndex].linkedinUrl && (
-                        <a href={advertisements[currentAdIndex].linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                          <FontAwesomeIcon icon={faLinkedin} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {advertisements.length > 1 && (
-                <div className="ad-nav">
-                  <button
-                    onClick={() => setCurrentAdIndex((prev) => (prev - 1 + advertisements.length) % advertisements.length)}
-                    className="ad-nav-btn"
-                  >
-                    &lt;
-                  </button>
-                  <button
-                    onClick={() => setCurrentAdIndex((prev) => (prev + 1) % advertisements.length)}
-                    className="ad-nav-btn"
-                  >
-                    &gt;
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* ================== Advertisement Section ================== */}
+<style jsx>{`
+  .advertisement-section {
+    margin: 24px 0;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .ads {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 0.75rem;
+    color: white;
+  }
+
+  .ad-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .ad-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ad-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #222;
+  }
+
+  .ad-description {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .ad-meta {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .ad-contact-icons {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .ad-contact-icons a {
+    font-size: 1.3rem;
+    color: #03718a;
+  }
+
+  .ad-website-btn {
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: #03718a;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .ad-website-btn:hover {
+    background: #025b6e;
+  }
+
+  .ad-nav {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .ad-nav-btn {
+    border: none;
+    background: #03718a;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .ad-container {
+      grid-template-columns: 1fr;
+    }
+
+    .ad-image {
+      height: 200px;
+    }
+  }
+`}</style>
+
+<div className="advertisement-section">
+  <span className="ads">Sponsored</span>
+
+  {adsLoading && <p>Loading advertisements...</p>}
+  {adsError && <p className="error-text">{adsError}</p>}
+
+  {!adsLoading && !adsError && advertisements.length > 0 && (
+    <div key={advertisements[currentAdIndex].id} className="ad-container">
+      <img
+        src={advertisements[currentAdIndex].bannerImageUrl}
+        alt={advertisements[currentAdIndex].title}
+        className="ad-image"
+        onError={(e) => (e.target.src = PLACEHOLDER_IMAGE)}
+      />
+
+      <div className="ad-content">
+        <h3 className="ad-title">
+          {advertisements[currentAdIndex].title}
+        </h3>
+
+        <p className="ad-description">
+          {advertisements[currentAdIndex].description}
+        </p>
+
+        <p className="ad-meta">
+          📍 {advertisements[currentAdIndex].districtName}
+        </p>
+
+        <p className="ad-meta">
+          👤 {advertisements[currentAdIndex].createdBy?.name}
+        </p>
+
+        <p className="ad-meta">
+          📅 Valid:
+          {new Date(advertisements[currentAdIndex].validFrom).toLocaleDateString("en-IN")}
+          {" "}–{" "}
+          {new Date(advertisements[currentAdIndex].validUntil).toLocaleDateString("en-IN")}
+        </p>
+
+        <p className="ad-meta">
+          👁 {advertisements[currentAdIndex].viewCount} views
+        </p>
+
+        <div className="ad-contact-icons">
+          {advertisements[currentAdIndex].phoneNumber && (
+            <a href={`tel:${advertisements[currentAdIndex].phoneNumber}`}>
+              <FontAwesomeIcon icon={faPhone} />
+            </a>
+          )}
+
+          {advertisements[currentAdIndex].whatsappNumber && (
+            <a
+              href={`https://wa.me/${advertisements[currentAdIndex].whatsappNumber}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FontAwesomeIcon icon={faWhatsapp} />
+            </a>
+          )}
+
+          {advertisements[currentAdIndex].emailAddress && (
+            <a href={`mailto:${advertisements[currentAdIndex].emailAddress}`}>
+              <FontAwesomeIcon icon={faEnvelope} />
+            </a>
+          )}
+        </div>
+
+        {advertisements[currentAdIndex].websiteUrl && (
+          <a
+            href={advertisements[currentAdIndex].websiteUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="ad-website-btn"
+          >
+            🌐 Visit Website
+          </a>
+        )}
+      </div>
+    </div>
+  )}
+
+  {advertisements.length > 1 && (
+    <div className="ad-nav">
+      <button
+        className="ad-nav-btn"
+        onClick={() =>
+          setCurrentAdIndex(
+            (prev) => (prev - 1 + advertisements.length) % advertisements.length
+          )
+        }
+      >
+        ‹
+      </button>
+      <button
+        className="ad-nav-btn"
+        onClick={() =>
+          setCurrentAdIndex((prev) => (prev + 1) % advertisements.length)
+        }
+      >
+        ›
+      </button>
+    </div>
+  )}
+</div>
+{/* ================== Advertisement Section End ================== */}
+
 
             <div className="description-section">
               <h2>Description</h2>
@@ -1081,4 +1269,3 @@ function PgAndHostelDetails() {
 }
 
 export default PgAndHostelDetails;
-

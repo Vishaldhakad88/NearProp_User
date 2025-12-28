@@ -53,9 +53,9 @@ const redirectToDashboard = (role, token) => {
     return;
   }
   const urls = {
-    DEVELOPER: "https://developerdashboard.nearprop.com/dashboard",  // Add /landing
-    ADVISOR: "https://propertyadviser.nearprop.com/dashboard",
-    SELLER: "https://sellerdashboard.nearprop.com/landing", 
+    DEVELOPER: "https://developerdashboard.nearprop.com/",  // Add /landing
+    ADVISOR: "https://propertyadviser.nearprop.com/",
+    SELLER: "https://sellerdashboard.nearprop.com/", 
     ADMIN: "https://admindashboard.nearprop.com/dashboard",
   };
 
@@ -779,12 +779,27 @@ console.log(googleResponse.data)
                             <FaUserCog className="icon" /> Developer Dashboard
                           </button>
                         )}
+
+                        <button
+  className="dashboard-btn"
+  onClick={() => window.open("https://pgandhostel.nearprop.com/", "_blank")}
+>
+  🏠 PG & Hostel
+</button>
+
+<button
+  className="dashboard-btn"
+  onClick={() => window.open("https://hotelsandbanquets.nearprop.com/", "_blank")}
+>
+  🏨 Hotel & Banquet
+</button>
+
                         {currentUser.roles.includes("SELLER") && (
                           <button
                             className="dashboard-btn"
                             onClick={() => redirectToDashboard("SELLER",token)}
                           >
-                            <FaUserTie className="icon" /> Seller Dashboard
+                            <FaUserTie className="icon" /> Seller/Owner Dashboard
                           </button>
                         )}
                         {currentUser.roles.includes("ADVISOR") && (
@@ -853,7 +868,7 @@ console.log(googleResponse.data)
                       >
                         <option value="">Select a role</option>
                         <option value="DEVELOPER">Developer</option>
-                        <option value="SELLER">Seller</option>
+                        <option value="SELLER">Seller/Owner</option>
                         <option value="ADVISOR">Property Advisor</option>
                       </select>
                       <label className="form-label">Reason for Role</label>

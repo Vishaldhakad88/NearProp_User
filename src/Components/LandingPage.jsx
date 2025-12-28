@@ -156,13 +156,16 @@ const CitySearch = ({ formData, handleFormChange, isLoading, cities }) => {
         className="search-select"
         value={searchTerm}
         onChange={handleInputChange}
-        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+          onFocus={() => setIsOpen(true)}
+
         placeholder="Type or select a city"
         disabled={isLoading}
         style={{ width: '100%', padding: '8px', fontSize: '15px' }}
       />
       {isOpen && filteredCities.length > 0 && (
         <ul
+            onMouseLeave={() => setIsOpen(false)}
+
           style={{
             width: "100%",
             padding: "8px 12px",
@@ -198,7 +201,7 @@ const CitySearch = ({ formData, handleFormChange, isLoading, cities }) => {
           {filteredCities.map((city) => (
             <li
               key={city}
-              onClick={() => handleOptionClick(city)}
+              onMouseDown={() => handleOptionClick(city)}
               style={{
                 padding: '8px',
                 cursor: 'pointer',
@@ -509,8 +512,8 @@ function LandingPage() {
   };
 
   const categories = [
-    { key: "rent", label: "For Rent", icon: faHouse, color: "#2ecc71", path: "/forrent" },
-    { key: "sale", label: "For Sale", icon: faHouse, color: "#3498db", path: "/forsell" },
+    { key: "rent", label: "Rent", icon: faHouse, color: "#2ecc71", path: "/forrent" },
+    { key: "sale", label: "Sale", icon: faHouse, color: "#3498db", path: "/forsell" },
     { key: "apartment", label: "Apartment", icon: faBuilding, color: "#9b59b6", path: "/apartment" },
     { key: "plot", label: "Plot", icon: faBuildingColumns, color: "#e74c3c", path: "/plot" },
     { key: "hotel", label: "Hotel", icon: faHotel, color: "#f1c40f", path: "/hotel" },
@@ -830,7 +833,7 @@ function LandingPage() {
           <div className="search-box" style={{ color: 'white', opacity: 0.9, padding: '10px', borderRadius: '10px' }}>
             <div className="tabs responsive-tabs" style={{ marginTop: '240px' }}>
               {[
-                { key: 'all', label: 'All Status', path: '/' },
+                // { key: 'all', label: 'All Status', path: '/' },
                 { key: 'rent', label: 'Rent', path: '/forrent' },
                 { key: 'sale', label: 'Sale', path: '/forsell' },
                 { key: 'hotel', label: 'Hotel', path: '/hotel' },
@@ -843,8 +846,8 @@ function LandingPage() {
                   className={activeTab === tab.key ? 'active' : ''}
                   style={{
                     opacity: activeTab === tab.key ? 1 : 0.95,
-                    backgroundColor: activeTab === tab.key ? 'darkcyan' : 'white',
-                    color: activeTab === tab.key ? 'white' : 'darkcyan',
+                    backgroundColor: 'white',
+                    color: 'darkcyan',
                     padding: '5px',
                     width: '100px',
                     height: '55px',
