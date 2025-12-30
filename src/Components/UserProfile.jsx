@@ -407,12 +407,16 @@ function UserProfile() {
 
     setValidationError("");
 
-    const emailRegex =
-      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    if (!emailRegex.test(profileData.email)) {
-      setValidationError("Please enter a valid email address.");
-      return;
-    }
+    // ✅ Email optional: sirf tab validate karo jab email filled ho
+if (profileData.email) {
+  const emailRegex =
+    /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+  if (!emailRegex.test(profileData.email)) {
+    setValidationError("Please enter a valid email address.");
+    return;
+  }
+}
 
     const formData = new FormData();
     formData.append("name", profileData.name);

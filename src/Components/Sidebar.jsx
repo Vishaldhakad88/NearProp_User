@@ -556,6 +556,24 @@ const isBasicPlan = planName.startsWith("basic");
     return `${country} ${part1}-${part2}`;
   };
 
+  // Function to track ad click
+  const trackAdClick = async (adId, clickType) => {
+    if (!adId) return;
+    try {
+      await axios.post(
+        `${API_CONFIG.baseUrl}/api/v1/advertisements/${adId}/click/${clickType}`,
+        {},
+        {
+          headers: {
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
+    } catch (err) {
+      console.error('Failed to track ad click:', err);
+    }
+  };
+
   // Initial data fetch
   useEffect(() => {
     fetchAdvertisements();
@@ -1624,6 +1642,7 @@ const isBasicPlan = planName.startsWith("basic");
       href={`tel:${ad.phoneNumber}`}
       className="call"
       aria-label="Call advertisement contact"
+      onClick={() => trackAdClick(ad.id, 'phone')}
     >
       <FontAwesomeIcon icon={faPhone} />
     </a>
@@ -1635,6 +1654,7 @@ const isBasicPlan = planName.startsWith("basic");
       className="whatsapp"
       target="_blank"
       aria-label="WhatsApp advertisement contact"
+      onClick={() => trackAdClick(ad.id, 'whatsapp')}
     >
       <FontAwesomeIcon icon={faWhatsapp} />
     </a>
@@ -1645,6 +1665,7 @@ const isBasicPlan = planName.startsWith("basic");
     <a
       href={`mailto:${ad.emailAddress}?subject=Inquiry about ${ad.title || 'Advertisement'}`}
       className="mail"
+      onClick={() => trackAdClick(ad.id, 'email')} // assuming email click type is 'email' or fallback
     >
       <FontAwesomeIcon icon={faEnvelope} />
     </a>
@@ -1652,37 +1673,37 @@ const isBasicPlan = planName.startsWith("basic");
 
   {/* Social links always allowed */}
   {ad.instagramUrl && ad.instagramUrl.trim() !== '' && (
-    <a href={ad.instagramUrl} className="instagram" target="_blank">
+    <a href={ad.instagramUrl} className="instagram" target="_blank" onClick={() => trackAdClick(ad.id, 'instagram')}>
       <FontAwesomeIcon icon={faInstagram} />
     </a>
   )}
 
   {ad.facebookUrl && ad.facebookUrl.trim() !== '' && (
-    <a href={ad.facebookUrl} className="facebook" target="_blank">
+    <a href={ad.facebookUrl} className="facebook" target="_blank" onClick={() => trackAdClick(ad.id, 'facebook')}>
       <FontAwesomeIcon icon={faFacebookF} />
     </a>
   )}
 
   {ad.twitterUrl && ad.twitterUrl.trim() !== '' && (
-    <a href={ad.twitterUrl} className="twitter" target="_blank">
+    <a href={ad.twitterUrl} className="twitter" target="_blank" onClick={() => trackAdClick(ad.id, 'twitter')}>
       <FontAwesomeIcon icon={faTwitter} />
     </a>
   )}
 
   {ad.linkedinUrl && ad.linkedinUrl.trim() !== '' && (
-    <a href={ad.linkedinUrl} className="linkedin" target="_blank">
+    <a href={ad.linkedinUrl} className="linkedin" target="_blank" onClick={() => trackAdClick(ad.id, 'linkedin')}>
       <FontAwesomeIcon icon={faLinkedinIn} />
     </a>
   )}
 
   {ad.youtubeUrl && ad.youtubeUrl.trim() !== '' && (
-    <a href={ad.youtubeUrl} className="youtube" target="_blank">
+    <a href={ad.youtubeUrl} className="youtube" target="_blank" onClick={() => trackAdClick(ad.id, 'youtube')}>
       <FontAwesomeIcon icon={faYoutube} />
     </a>
   )}
 
   {ad.websiteUrl && ad.websiteUrl.trim() !== '' && (
-    <a href={ad.websiteUrl} className="website" target="_blank">
+    <a href={ad.websiteUrl} className="website" target="_blank" onClick={() => trackAdClick(ad.id, 'website')}>
       <FontAwesomeIcon icon={faGlobe} />
     </a>
   )}

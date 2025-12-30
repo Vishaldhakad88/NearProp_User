@@ -26,8 +26,6 @@ import {
   FaEye,
 } from "react-icons/fa";
 import villa1 from "../assets/villa-1.avif";
-import villa2 from "../assets/villa-2.avif";
-import villa3 from "../assets/villa-3.avif";
 import nearpropLogo from "../assets/Nearprop 1.png";
 import axios from "axios";
 
@@ -376,11 +374,22 @@ function Agent() {
                     <h2 className="nearprop-agent-name ">
                       {developer.name || "Unknown Developer"}
                     </h2>
-                    <div className="nearprop-stars">★ ★ ★ ☆ ☆</div>
+                    <div className="nearprop-stars">★★★★☆</div>
                   </div>
                   <p className="nearprop-designation p-2">
-                    Developer at <a href="#">Modern House Real Estate</a>
+                    Property Advisor • NearProp Verified
                   </p>
+
+                  {/* State & District Display - Added Here */}
+                  {(developer.state || developer.district) && (
+                    <div style={{ margin: "10px 0", color: "#555", fontSize: "14px", padding: "0 16px" }}>
+                      <FaMapMarkerAlt style={{ marginRight: "6px", color: "#e74c3c" }} />
+                      {developer.state && <span>{developer.state}</span>}
+                      {developer.state && developer.district && <span>, </span>}
+                      {developer.district && <span>{developer.district}</span>}
+                    </div>
+                  )}
+
                   <div className="nearprop-details">
                     <div className="nearprop-row">
                       <span>Call</span>
@@ -395,7 +404,7 @@ function Agent() {
                       <span>WhatsApp</span>
                       <p>
                         <a
-                          href={`https://wa.me/${developer.mobileNumber || "3214569874"}`}
+                          href={`https://wa.me/${developer.mobileNumber?.replace(/\+/g, "") || "3214569874"}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -415,7 +424,9 @@ function Agent() {
                     <hr />
                     <div className="nearprop-row">
                       <span>Profile</span>
-                      <label onClick={() => openDeveloperModal(developer)}><FaEye /></label>
+                      <label onClick={() => openDeveloperModal(developer)} style={{ cursor: "pointer" }}>
+                        <FaEye style={{ fontSize: "18px", color: "#3498db" }} />
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -427,10 +438,10 @@ function Agent() {
         {/* Sidebar */}
         <div className="agents-sidebar">
           <div className="widget">
-            <h3>Find Developer</h3>
+            <h3>Find Advisor</h3>
             <input
               type="text"
-              placeholder="Enter developer name"
+              placeholder="Enter advisor name"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -453,9 +464,8 @@ function Agent() {
                 disabled={filteredDistricts.length === 0}
               />
             </div>
-            <button className="search-btn" onClick={applyFilters}>Search Developer</button>
+            <button className="search-btn" onClick={applyFilters}>Search Advisor</button>
           </div>
-         
         </div>
       </div>
 
@@ -466,7 +476,7 @@ function Agent() {
             <div className="agentlist-modal-header">
               <span className="agentlist-modal-title">Advisor Profile</span>
               <span className="agentlist-modal-close" onClick={closeDeveloperModal}>
-                &times;
+                ×
               </span>
             </div>
 
@@ -488,8 +498,19 @@ function Agent() {
                   <FaCheckCircle className="agentlist-verified" />
                 </h2>
                 <p className="agentlist-role-text">
-                  Advisor at Modern House Real Estate
+                  Property Advisor
                 </p>
+
+                {/* State & District in Modal Header */}
+                {(selectedDeveloper.state || selectedDeveloper.district) && (
+                  <div style={{ margin: "10px 0", color: "#555", fontSize: "15px" }}>
+                    <FaMapMarkerAlt style={{ marginRight: "8px", color: "#e74c3c" }} />
+                    {selectedDeveloper.state && <span>{selectedDeveloper.state}</span>}
+                    {selectedDeveloper.state && selectedDeveloper.district && <span>, </span>}
+                    {selectedDeveloper.district && <span>{selectedDeveloper.district}</span>}
+                  </div>
+                )}
+
                 <div className="agentlist-rating">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <FaStar
@@ -515,7 +536,7 @@ function Agent() {
                 </button>
               </a>
               <a
-                href={`https://wa.me/${selectedDeveloper.mobileNumber || "3214569874"}`}
+                href={`https://wa.me/${selectedDeveloper.mobileNumber?.replace(/\+/g, "") || "3214569874"}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -549,10 +570,16 @@ function Agent() {
 
             <div className="agentlist-tab-content">
               {activeTab === "about" && (
-                <div>
+                <div style={{ padding: "20px" }}>
                   <h3>Details</h3>
-                  <p><FaBuilding /> Company: Modern House Real Estate</p>
-                  <p><FaMapMarkerAlt /> Address: California, USA</p>
+                  <p><FaBuilding /> Role: Property Advisor</p>
+                  {(selectedDeveloper.state || selectedDeveloper.district) && (
+                    <p>
+                      <FaMapMarkerAlt style={{ marginRight: "10px" }} />
+                      {selectedDeveloper.district && `${selectedDeveloper.district}, `}
+                      {selectedDeveloper.state || ""}
+                    </p>
+                  )}
                   <p><FaHome /> Properties: {agentListings.length || 0} listings</p>
                 </div>
               )}
@@ -776,6 +803,7 @@ function Agent() {
           </div>
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }

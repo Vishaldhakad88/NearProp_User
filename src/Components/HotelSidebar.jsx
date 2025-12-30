@@ -46,6 +46,26 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
     }
   };
 
+  // Track advertisement clicks
+  const trackAdClick = async (adId, clickType) => {
+    try {
+      const token = getToken()?.token;
+      await axios.post(
+        `${AD_API_CONFIG.baseUrl}/${AD_API_CONFIG.apiPrefix}/advertisements/${adId}/click/${clickType}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
+      console.log(`Click tracked: ${clickType} for ad ${adId}`);
+    } catch (err) {
+      console.error(`Error tracking ${clickType} click:`, err.message);
+    }
+  };
+
   // Fetch advertisements
   const fetchAdvertisements = async () => {
     try {
@@ -131,6 +151,13 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
     alert('Message sent successfully!');
   };
 
+  const handleAdContactClick = (ad, clickType, url) => {
+    if (ad.id) {
+      trackAdClick(ad.id, clickType);
+    }
+    window.open(url, clickType === 'phone' ? '_self' : '_blank');
+  };
+
   const normalizedOwner = {
     name: owner?.name || 'Unknown Agent',
     phone: owner?.phone || 'N/A',
@@ -179,40 +206,96 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
                   <p className="ad-description">{ad.description || 'No description available'}</p>
                   <div className="ad-contact-icons">
                     {ad.phoneNumber && ad.phoneNumber !== 'N/A' && (
-                      <a href={`tel:${ad.phoneNumber}`} className="call" title="Call">
+                      <a 
+                        href="#" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'phone', `tel:${ad.phoneNumber}`);
+                        }}
+                        className="call" 
+                        title="Call"
+                      >
                         <FontAwesomeIcon icon={faPhone} />
                       </a>
                     )}
                     {ad.emailAddress && ad.emailAddress !== 'N/A' && (
-                      <a href={`mailto:${ad.emailAddress}?subject=Inquiry about ${ad.title || 'Advertisement'}`} className="mail" title="Email">
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = `mailto:${ad.emailAddress}?subject=Inquiry about ${ad.title || 'Advertisement'}`;
+                        }}
+                        className="mail" 
+                        title="Email"
+                      >
                         <FontAwesomeIcon icon={faEnvelope} />
                       </a>
                     )}
                     {ad.whatsappNumber && ad.whatsappNumber !== 'N/A' && (
-                      <a href={`https://wa.me/${ad.whatsappNumber}`} className="whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'whatsapp', `https://wa.me/${ad.whatsappNumber}`);
+                        }}
+                        className="whatsapp" 
+                        title="WhatsApp"
+                      >
                         <FontAwesomeIcon icon={faWhatsapp} />
                       </a>
                     )}
-                    {/* {ad.instagramUrl && (
-                      <a href={ad.instagramUrl} className="instagram" target="_blank" rel="noopener noreferrer" title="Instagram">
+                    {ad.instagramUrl && (
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'instagram', ad.instagramUrl);
+                        }}
+                        className="instagram" 
+                        title="Instagram"
+                      >
                         <FontAwesomeIcon icon={faInstagram} />
                       </a>
-                    )} */}
+                    )}
                     {ad.facebookUrl && (
-                      <a href={ad.facebookUrl} className="facebook" target="_blank" rel="noopener noreferrer" title="Facebook">
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'facebook', ad.facebookUrl);
+                        }}
+                        className="facebook" 
+                        title="Facebook"
+                      >
                         <FontAwesomeIcon icon={faFacebookF} />
                       </a>
                     )}
-                    {/* {ad.youtubeUrl && (
-                      <a href={ad.youtubeUrl} className="youtube" target="_blank" rel="noopener noreferrer" title="YouTube">
+                    {ad.youtubeUrl && (
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'youtube', ad.youtubeUrl);
+                        }}
+                        className="youtube" 
+                        title="YouTube"
+                      >
                         <FontAwesomeIcon icon={faYoutube} />
                       </a>
-                    )} */}
-                    {/* {ad.websiteUrl && (
-                      <a href={ad.websiteUrl} className="website" target="_blank" rel="noopener noreferrer" title="Website">
+                    )}
+                    {ad.websiteUrl && (
+                      <a 
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAdContactClick(ad, 'website', ad.websiteUrl);
+                        }}
+                        className="website" 
+                        title="Website"
+                      >
                         <FontAwesomeIcon icon={faGlobe} />
                       </a>
-                    )} */}
+                    )}
                   </div>
                 </div>
               ))}

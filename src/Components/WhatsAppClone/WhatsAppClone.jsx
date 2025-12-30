@@ -49,6 +49,7 @@ const WhatsAppClone = () => {
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [error, setError] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null); // New state for toast
   const recognitionRef = useRef(null);
 
   // New states for profile
@@ -80,7 +81,6 @@ const WhatsAppClone = () => {
   // Fetch user profile from API
   const fetchUserProfile = async () => {
     if (!token) {
-      // Fallback to localStorage name if no token
       setCurrentUserName(authData?.name || 'User');
       setProfileImageUrl(null);
       return;
@@ -101,13 +101,11 @@ const WhatsAppClone = () => {
       }
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
-      // Fallback to localStorage
       setCurrentUserName(authData?.name || 'User');
       setProfileImageUrl(null);
     }
   };
 
-  // Call profile fetch on mount if logged in
   useEffect(() => {
     if (!isGuest) {
       fetchUserProfile();
@@ -118,7 +116,6 @@ const WhatsAppClone = () => {
     }
   }, [isGuest]);
 
-  // Scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -135,7 +132,6 @@ const WhatsAppClone = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Setup Speech Recognition (only once)
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -168,7 +164,6 @@ const WhatsAppClone = () => {
     }
   }, []);
 
-  // Toggle voice recording
   const toggleRecording = () => {
     if (!recognitionRef.current) {
       setError('Voice recording not supported in your browser.');
@@ -184,7 +179,6 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Fetch chat rooms
   const fetchRooms = async () => {
     if (isGuest) {
       setRooms([]);
@@ -228,7 +222,6 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Fetch messages for a chat room
   const fetchMessages = async (roomId) => {
     if (isGuest) {
       setMessages((prev) => ({ ...prev, [roomId]: [] }));
@@ -263,7 +256,6 @@ const WhatsAppClone = () => {
         };
       });
 
-      // Mark unread messages as read
       messagesData.forEach((msg) => {
         if (!msg.mine && msg.status !== 'READ') {
           markMessageAsRead(msg.id, roomId);
@@ -277,10 +269,18 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Send a message
+  // Send a message with mobile number block
   const sendMessage = async () => {
     if (isGuest || isSending || !inputMessage.trim() || !activeRoom) return;
     
+    // Mobile number detection (10+ digits, with or without +)
+    const mobileRegex = /(\+?\d{10,})/g;
+    if (mobileRegex.test(inputMessage.trim())) {
+      setToastMessage("You cannot send mobile number");
+      setTimeout(() => setToastMessage(null), 3000); // Auto hide after 3 seconds
+      return; // Block sending
+    }
+
     setIsSending(true);
     try {
       const response = await axios.post(
@@ -330,7 +330,6 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Mark message as read
   const markMessageAsRead = async (messageId, roomId) => {
     if (isGuest) return;
     try {
@@ -359,7 +358,6 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Handle typing
   const handleTyping = (e) => {
     setInputMessage(e.target.value);
     if (isGuest || !activeRoom) return;
@@ -424,7 +422,6 @@ const WhatsAppClone = () => {
     room.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // WebSocket setup
   useEffect(() => {
     if (!isGuest && token && activeRoom) {
       initWebSocket(token, activeRoom.id, setIsConnected, setMessages, setTypingUsers, setRooms);
@@ -444,7 +441,6 @@ const WhatsAppClone = () => {
     <div className="whatsapp-container">
       {/* Sidebar - Chat List */}
       <div className={`chat-sidebar ${!showChatList && isMobile ? 'hidden' : ''}`}>
-        {/* Header */}
         <div className="sidebar-header">
           <div
             className="user-profile"
@@ -468,7 +464,6 @@ const WhatsAppClone = () => {
           </div>
         </div>
 
-        {/* Search Bar */}
         <div className="search-container">
           <div className="search-bar">
             <FontAwesomeIcon icon={faSearch} className="search-icon" />
@@ -481,7 +476,6 @@ const WhatsAppClone = () => {
           </div>
         </div>
 
-        {/* Chat List */}
         <div className="chat-list">
           {isLoading && rooms.length === 0 ? (
             <div className="loading p-4 text-center">Loading chats...</div>
@@ -532,11 +526,9 @@ const WhatsAppClone = () => {
         </div>
       </div>
 
-      {/* Chat Window */}
       <div className={`chat-window ${showChatList && isMobile ? 'hidden' : ''}`}>
         {activeRoom ? (
           <>
-            {/* Chat Header */}
             <div className="chat-header-bar">
               {isMobile && (
                 <FontAwesomeIcon
@@ -559,7 +551,6 @@ const WhatsAppClone = () => {
               </div>
             </div>
 
-            {/* Messages Container */}
             <div className="messages-container">
               {isLoading && (messages[activeRoom.id] || []).length === 0 ? (
                 <div className="loading p-4 text-center">Loading messages...</div>
@@ -599,7 +590,6 @@ const WhatsAppClone = () => {
               )}
             </div>
 
-            {/* Input Area */}
             <div className="input-container">
               <input
                 type="file"
@@ -655,11 +645,21 @@ const WhatsAppClone = () => {
           </button>
         </div>
       )}
+
+      {/* New Toast for mobile number block */}
+      {toastMessage && (
+        <div className="error-toast" style={{ background: '#ef4444' }}>
+          <p>{toastMessage}</p>
+          <button onClick={() => setToastMessage(null)}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-// Subscribe to WebSocket room
+// WebSocket functions remain unchanged
 const subscribeToRoom = (roomId, setMessages, setTypingUsers, setIsConnected, setRooms) => {
   if (!stompClient || !stompClient.connected || !roomId) {
     console.warn('Cannot subscribe: WebSocket not connected or roomId missing', { roomId });
@@ -746,7 +746,6 @@ const subscribeToRoom = (roomId, setMessages, setTypingUsers, setIsConnected, se
   console.log(`Subscribed to /topic/chat/${roomId}`);
 };
 
-// Initialize WebSocket
 const initWebSocket = (token, roomId, setIsConnected, setMessages, setTypingUsers, setRooms) => {
   if (stompClient && stompClient.connected) {
     console.log('WebSocket already connected');
@@ -782,7 +781,6 @@ const initWebSocket = (token, roomId, setIsConnected, setMessages, setTypingUser
   stompClient.activate();
 };
 
-// Send typing event
 const sendTypingEvent = ({ destination, body, headers }) => {
   if (stompClient && stompClient.connected) {
     console.log('Sending typing event:', { destination, body });
@@ -790,7 +788,6 @@ const sendTypingEvent = ({ destination, body, headers }) => {
   }
 };
 
-// Close WebSocket
 const closeWebSocket = () => {
   if (stompClient) {
     if (currentSubscription) {
