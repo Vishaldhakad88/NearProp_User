@@ -12,6 +12,7 @@ import {
   faComment,
   faMapMarkerAlt as faMapMarkerAltSolid,
   faStar as faSolidStar,
+  faShareAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -45,6 +46,9 @@ function Developer() {
   const [reviewsError, setReviewsError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+
+  // Share modal state
+  const [shareDeveloper, setShareDeveloper] = useState(null);
 
   // Location filters
   const [states, setStates] = useState([]);
@@ -181,6 +185,14 @@ function Developer() {
     setReviewCount(0);
   };
 
+  const openShareModal = (developer) => {
+    setShareDeveloper(developer);
+  };
+
+  const closeShareModal = () => {
+    setShareDeveloper(null);
+  };
+
   const fetchDeveloperListings = async (developerId) => {
     try {
       const token = getToken();
@@ -271,6 +283,40 @@ function Developer() {
     d.toLowerCase().includes(districtSearch.toLowerCase())
   );
 
+  // Generate shareable URL
+  const generateShareUrl = (developerId) => {
+  return `${window.location.origin}/developer#${developerId}`;
+};
+
+useEffect(() => {
+  if (window.location.hash) {
+    const hashId = window.location.hash.substring(1); // remove #
+    if (developers.length > 0) {
+      const dev = developers.find(d => d.id === hashId);
+      if (dev) {
+        openDeveloperModal(dev);
+        // Optional: clean hash after opening
+        // window.history.replaceState({}, document.title, "/developer");
+      }
+    }
+  }
+}, [developers]);
+
+
+  // Handle shared link opening
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const devId = params.get("dev");
+    if (devId && developers.length > 0) {
+      const dev = developers.find(d => d.id === devId);
+      if (dev) {
+        openDeveloperModal(dev);
+        // Clean URL after opening
+        window.history.replaceState({}, document.title, "/developer");
+      }
+    }
+  }, [developers]);
+
   // If not authenticated, only show toast
   const token = getToken();
   if (!token) {
@@ -290,7 +336,32 @@ function Developer() {
 
           <div className="agents-grid">
             {filteredDevelopers.map((developer) => (
-              <div key={developer.id} className="nearprop-agent-card">
+              <div key={developer.id} className="nearprop-agent-card" style={{ position: "relative" }}>
+                {/* Share Icon - Top Right */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    background: "rgba(255,255,255,0.8)",
+                    borderRadius: "50%",
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    zIndex: 10,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openShareModal(developer);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faShareAlt} style={{ fontSize: "18px", color: "#3498db" }} />
+                </div>
+
                 <img
                   src={
                     developer.profileImageUrl ||
@@ -312,12 +383,14 @@ function Developer() {
 
                   {/* State & District Display */}
                   {(developer.state || developer.district) && (
-                    <div style={{ margin: "10px 0", color: "#555", fontSize: "14px" }}>
-                      <FaMapMarkerAlt style={{ marginRight: "6px", color: "#e74c3c" }} />
-                      {developer.state && <span>{developer.state}</span>}
-                      {developer.state && developer.district && <span>, </span>}
-                      {developer.district && <span>{developer.district}</span>}
-                    </div>
+                    <div style={{ margin: "10px 0", color: "#555", fontSize: "14px", padding: "0 16px", display: "flex", alignItems: "center", gap: "6px" }}>
+                                          <FaMapMarkerAlt style={{ color: "#e74c3c", flexShrink: 0 }} />
+                                          <span>
+                                            {developer.state && <span>{developer.state}</span>}
+                                            {developer.state && developer.district && <span>, </span>}
+                                            {developer.district && <span>{developer.district}</span>}
+                                          </span>
+                                        </div>
                   )}
 
                   <div className="nearprop-details">
@@ -476,7 +549,50 @@ function Developer() {
         </div>
       </div>
 
-      {/* Full-Page Modal */}
+      {/* Share Modal */}
+      {shareDeveloper && (
+        <div className="agentlist-modal-fullpage" style={{ zIndex: 9999 }}>
+          <div className="agentlist-modal-content" style={{ maxWidth: "500px" }}>
+            <div className="agentlist-modal-header">
+              <span className="agentlist-modal-title">Share Developer Profile</span>
+              <span className="agentlist-modal-close" onClick={closeShareModal}>
+                &times;
+              </span>
+            </div>
+            <div style={{ padding: "30px", textAlign: "center" }}>
+              <p>Copy this link to share:</p>
+              <div style={{
+                background: "#f1f1f1",
+                padding: "12px",
+                borderRadius: "8px",
+                wordBreak: "break-all",
+                margin: "15px 0",
+                fontFamily: "monospace",
+              }}>
+                {generateShareUrl(shareDeveloper.id)}
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(generateShareUrl(shareDeveloper.id));
+                  toast.success("Link copied to clipboard!");
+                }}
+                style={{
+                  padding: "10px 20px",
+                  background: "#3498db",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-Page Modal (Profile) */}
       {selectedDeveloper && (
         <div className="agentlist-modal-fullpage">
           <div className="agentlist-modal-content">
@@ -706,8 +822,10 @@ function Developer() {
                                     alignItems: "center",
                                     gap: "6px",
                                   }}>
-                                    <FontAwesomeIcon icon={faMapMarkerAltSolid} />
-                                    {property.address || "No Address"}
+                                    {/* <FontAwesomeIcon icon={faMapMarkerAltSolid} /> */}
+                                    <span style={{ lineHeight: "1.4" }}>
+                                      {property.address || "No Address"}
+                                    </span>
                                   </div>
 
                                   <div style={{

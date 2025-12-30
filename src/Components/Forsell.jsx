@@ -20,7 +20,6 @@ import Apartment6 from '../assets/penthouse.avif';
 import Apartment7 from '../assets/villa.avif';
 import AuthError from "../Components/AuthError";
 
-
 const fallbackImages = [Apartment, Apartment2, Apartment3, Apartment4, Apartment6, Apartment7];
 
 const API_CONFIG = {
@@ -68,7 +67,7 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
   return isNaN(distance) ? null : Number(distance.toFixed(2));
 };
 
-// Searchable Dropdown Component (added for State & City)
+// Searchable Dropdown Component
 const SearchableDropdown = ({ options, value, onChange, placeholder, disabled = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -163,7 +162,6 @@ function ForSell() {
   const [locationError, setLocationError] = useState(null);
   const [showAuthError, setShowAuthError] = useState(false);
 
-
   // Sidebar filters
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriceMin, setFilterPriceMin] = useState("");
@@ -175,12 +173,20 @@ function ForSell() {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [filteredDistricts, setFilteredDistricts] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]); // Changed to filteredCities
+  const [filteredCities, setFilteredCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
   const { baseUrl, apiPrefix } = API_CONFIG;
+
+  // Helper: Is property type residential?
+  const isResidentialType = (type) => {
+    if (!type) return true; // Default show if no type selected
+    const lowerType = type.toLowerCase();
+    const nonResidential = ["plot", "shop", "commercial"];
+    return !nonResidential.includes(lowerType);
+  };
 
   // ✅ Fetch For Sale properties
   useEffect(() => {
@@ -221,7 +227,7 @@ function ForSell() {
               owner: { name: property.owner?.name || "Unknown" },
               createdAt: property.createdAt || new Date().toISOString(),
               state: property.state || "",
-              districtName: property.districtName || property.district || "", // Support both field names
+              districtName: property.districtName || property.district || "",
               city: property.city || "",
               latitude: property.latitude || null,
               longitude: property.longitude || null,
@@ -233,15 +239,13 @@ function ForSell() {
           throw new Error(data.message || "API error");
         }
       } catch (err) {
-  console.error("Fetch properties error:", err.message);
+        console.error("Fetch properties error:", err.message);
 
-  if (err.message === "Authentication failed. Please log in again.") {
-    setShowAuthError(true);
-  } else {
-    setError(err.message);
-  }
-
-
+        if (err.message === "Authentication failed. Please log in again.") {
+          setShowAuthError(true);
+        } else {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -276,7 +280,7 @@ function ForSell() {
         const uniqueCities = [
           ...new Set(districtsData.map((d) => d.city).filter(Boolean)),
         ].sort();
-        setFilteredCities(uniqueCities); // Initialize filteredCities
+        setFilteredCities(uniqueCities);
       } catch (err) {
         console.error("Failed to load location data:", err.message);
       }
@@ -304,7 +308,7 @@ function ForSell() {
     }
   }, [selectedState, districts]);
 
-  // ✅ Update filtered cities when district changes (Copied from Properties.jsx)
+  // ✅ Update filtered cities when district changes
   useEffect(() => {
     if (selectedDistrict && selectedState) {
       const districtData = districts.filter(
@@ -366,19 +370,8 @@ function ForSell() {
     getUserLocation();
   }, []);
 
-  // ✅ Apply Filters and Sort by Distance (Aligned with Properties.jsx)
+  // ✅ Apply Filters and Sort by Distance
   const applyFilters = () => {
-    console.log("Applying filters with:", {
-      searchQuery,
-      filterPriceMin,
-      filterPriceMax,
-      filterBedrooms,
-      filterType,
-      selectedState,
-      selectedDistrict,
-      selectedCity,
-    });
-
     let filtered = [...properties];
 
     if (searchQuery.trim()) {
@@ -395,7 +388,8 @@ function ForSell() {
       filtered = filtered.filter((p) => Number(p.price) <= Number(filterPriceMax));
     }
 
-    if (filterBedrooms && !isNaN(filterBedrooms)) {
+    // Only apply bedrooms filter if selected type is residential
+    if (filterBedrooms && !isNaN(filterBedrooms) && isResidentialType(filterType)) {
       filtered = filtered.filter((p) => Number(p.bedrooms) >= Number(filterBedrooms));
     }
 
@@ -445,7 +439,6 @@ function ForSell() {
       });
     }
 
-    console.log("Filtered properties:", filtered);
     setFilteredProperties(filtered);
   };
 
@@ -465,12 +458,12 @@ function ForSell() {
   ]);
 
   if (loading) return <div style={{ padding: "20px" }}>Loading properties for sale…</div>;
-if (error && !showAuthError)
-  return (
-    <div style={{ padding: "20px", color: "#dc3545" }}>
-      Error: {error}
-    </div>
-  );
+  if (error && !showAuthError)
+    return (
+      <div style={{ padding: "20px", color: "#dc3545" }}>
+        Error: {error}
+      </div>
+    );
 
   return (
     <div>
@@ -508,7 +501,7 @@ if (error && !showAuthError)
           margin: "0 auto",
         }}
       >
-        {/* Left Section */}
+        {/* Left Section - Properties */}
         <div
           style={{
             flex: "3",
@@ -653,30 +646,47 @@ if (error && !showAuthError)
                       <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
                       {property.address || "No Address"}
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "12px",
-                        fontSize: "0.875rem",
-                        color: "#4a5568",
-                        marginBottom: "10px",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <FontAwesomeIcon icon={faBed} /> {property.bedrooms || 0}
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <FontAwesomeIcon icon={faShower} />{" "}
-                        {property.bathrooms || 0}
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <FontAwesomeIcon icon={faCar} /> {property.garages || 0}
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+
+                    {/* Conditional display of bedrooms/bathrooms/garages */}
+                    {isResidentialType(property.type) && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "12px",
+                          fontSize: "0.875rem",
+                          color: "#4a5568",
+                          marginBottom: "10px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          <FontAwesomeIcon icon={faBed} /> {property.bedrooms || 0}
+                        </span>
+                        <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          <FontAwesomeIcon icon={faShower} />{" "}
+                          {property.bathrooms || 0}
+                        </span>
+                        <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          <FontAwesomeIcon icon={faCar} /> {property.garages || 0}
+                        </span>
+                        <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          {property.area || "N/A"} {property.sizePostfix || "Sq Ft"}
+                        </span>
+                      </div>
+                    )}
+
+                    {!isResidentialType(property.type) && (
+                      <div
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "#4a5568",
+                          marginBottom: "10px",
+                        }}
+                      >
                         {property.area || "N/A"} {property.sizePostfix || "Sq Ft"}
-                      </span>
-                    </div>
+                      </div>
+                    )}
+
                     <span
                       style={{
                         fontWeight: "bold",
@@ -730,7 +740,7 @@ if (error && !showAuthError)
           </div>
         </div>
 
-        {/* Right Sidebar */}
+        {/* Right Sidebar - Filters */}
         <div
           style={{
             flex: "1",
@@ -757,6 +767,49 @@ if (error && !showAuthError)
                 Filter Properties For Sale
               </h3>
 
+
+
+  {/* 🔹 Property Type - Moved up */}
+              <div style={{ marginBottom: "15px" }}>
+                <label
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#1a202c",
+                    marginBottom: "5px",
+                    display: "block",
+                  }}
+                >
+                  Property Type
+                </label>
+                <select
+                  value={filterType}
+                  onChange={(e) => {
+                    setFilterType(e.target.value);
+                    if (!isResidentialType(e.target.value)) {
+                      setFilterBedrooms(""); // Clear bedrooms filter for non-residential
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  <option value="">All Types</option>
+                  <option value="villa">Villa</option>
+                  <option value="multi_family_home">Multi Family Home</option>
+                  <option value="single_family_home">Single Family Home</option>
+                  <option value="commercial">Commercial / Shop</option>
+                  <option value="house">House</option>
+                  <option value="plot">Plot</option>
+                  <option value="apartment">Apartment</option>
+                </select>
+              </div>
+
+              
               {/* 🔹 State - Searchable */}
               <div style={{ marginBottom: "15px" }}>
                 <label
@@ -778,8 +831,8 @@ if (error && !showAuthError)
                 />
               </div>
 
-              {/* District commented as in original */}
-              {/* <div style={{ marginBottom: "15px" }}>
+              {/* 🔹 District - Searchable */}
+              <div style={{ marginBottom: "15px" }}>
                 <label
                   style={{
                     fontSize: "0.875rem",
@@ -791,25 +844,16 @@ if (error && !showAuthError)
                 >
                   District
                 </label>
-                <select
+                <SearchableDropdown
+                  options={filteredDistricts.map(d => ({ value: d, label: d }))}
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">All Districts</option>
-                  {filteredDistricts.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
+                  placeholder="All Districts"
+                  disabled={filteredDistricts.length === 0}
+                />
+              </div>
+
+            
 
               {/* 🔹 City - Searchable */}
               <div style={{ marginBottom: "15px" }}>
@@ -833,7 +877,7 @@ if (error && !showAuthError)
                 />
               </div>
 
-              {/* Existing Filters */}
+              {/* Remaining Filters */}
               <div style={{ marginBottom: "15px" }}>
                 <label
                   style={{
@@ -915,70 +959,39 @@ if (error && !showAuthError)
                 />
               </div>
 
-              <div style={{ marginBottom: "15px" }}>
-                <label
-                  style={{
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#1a202c",
-                    marginBottom: "5px",
-                    display: "block",
-                  }}
-                >
-                  Minimum Bedrooms
-                </label>
-                <select
-                  value={filterBedrooms}
-                  onChange={(e) => setFilterBedrooms(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">Any</option>
-                  <option value="1">1+</option>
-                  <option value="2">2+</option>
-                  <option value="3">3+</option>
-                  <option value="4">4+</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: "15px" }}>
-                <label
-                  style={{
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#1a202c",
-                    marginBottom: "5px",
-                    display: "block",
-                  }}
-                >
-                  Property Type
-                </label>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">All Types</option>
-                  <option value="villa">Villa</option>
-                  <option value="multi_family_home">Multi Family Home</option>
-                  <option value="single_family_home">Single Family Home</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="house">House</option>
-                  <option value="plot">Plot</option>
-                  <option value="apartment">Apartment</option>
-                </select>
-              </div>
+              {/* Conditional Minimum Bedrooms Filter */}
+              {isResidentialType(filterType) && (
+                <div style={{ marginBottom: "15px" }}>
+                  <label
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      color: "#1a202c",
+                      marginBottom: "5px",
+                      display: "block",
+                    }}
+                  >
+                    Minimum Bedrooms
+                  </label>
+                  <select
+                    value={filterBedrooms}
+                    onChange={(e) => setFilterBedrooms(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    <option value="">Any</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                  </select>
+                </div>
+              )}
 
               <button
                 style={{
@@ -1000,11 +1013,11 @@ if (error && !showAuthError)
           </aside>
         </div>
       </div>
-      <AuthError
-  open={showAuthError}
-  onClose={() => setShowAuthError(false)}
-/>
 
+      <AuthError
+        open={showAuthError}
+        onClose={() => setShowAuthError(false)}
+      />
     </div>
   );
 }

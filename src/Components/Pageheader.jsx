@@ -203,6 +203,7 @@ const redirectToDashboard = (role, token) => {
     { path: '/commercialProperty', label: 'Commercial' },
     { path: '/termsandcondition', label: 'Terms and Conditions' },
     { path: '/privacyandpolicy', label: 'Privacy and Policy' },
+    { path: '/RefundPolicy', label: 'Refund Policy' },
   ];
 
   const getAuthData = () => {

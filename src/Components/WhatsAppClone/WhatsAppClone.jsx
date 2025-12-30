@@ -27,8 +27,8 @@ const API_CONFIG = {
   wsUrl: 'wss://api.nearprop.com/api/ws',
 };
 
-// Default images
-const DEFAULT_AVATAR = '/assets/default-avatar.png';
+// Default fallback image
+const DEFAULT_AVATAR = "https://i.pinimg.com/736x/d2/54/e5/d254e5c08e0bcc1f14dbf274346020b2.jpg";
 
 // WebSocket client variables
 let stompClient = null;
@@ -49,7 +49,6 @@ const WhatsAppClone = () => {
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [error, setError] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null); // New state for toast
   const recognitionRef = useRef(null);
 
   // New states for profile
@@ -116,13 +115,18 @@ const WhatsAppClone = () => {
     }
   }, [isGuest]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Prevent auto scroll to top on page load
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, []);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, activeRoom]);
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // };
+
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messages, activeRoom]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -269,24 +273,26 @@ const WhatsAppClone = () => {
     }
   };
 
-  // Send a message with mobile number block
+  // Mask numbers (after 4 digits → ****) only when sending
+  const maskNumbersInMessage = (text) => {
+    return text.replace(/\d{5,}/g, (match) => {
+      return match.slice(0, 4) + '*'.repeat(match.length - 4);
+    });
+  };
+
+  // Send a message with number masking (no toast block)
   const sendMessage = async () => {
     if (isGuest || isSending || !inputMessage.trim() || !activeRoom) return;
-    
-    // Mobile number detection (10+ digits, with or without +)
-    const mobileRegex = /(\+?\d{10,})/g;
-    if (mobileRegex.test(inputMessage.trim())) {
-      setToastMessage("You cannot send mobile number");
-      setTimeout(() => setToastMessage(null), 3000); // Auto hide after 3 seconds
-      return; // Block sending
-    }
+
+    const messageToSend = inputMessage.trim();
+    const maskedMessage = maskNumbersInMessage(messageToSend);
 
     setIsSending(true);
     try {
       const response = await axios.post(
         `${API_CONFIG.baseUrl}/${API_CONFIG.apiPrefix}/chat/rooms/${activeRoom.id}/messages`,
         {
-          content: inputMessage,
+          content: maskedMessage, // Send masked version
           parentMessageId: null,
         },
         {
@@ -313,7 +319,7 @@ const WhatsAppClone = () => {
                 sender: { id: userId, name: currentUserName },
                 createdAt: newMessage.createdAt || new Date().toISOString(),
                 isSent: true,
-                text: newMessage.content,
+                text: maskedMessage, // Show masked in UI too
                 timestamp: format(new Date(), 'h:mm a'),
               },
             ],
@@ -447,16 +453,15 @@ const WhatsAppClone = () => {
             style={{ cursor: "pointer" }}
             onClick={() => navigate("/userprofile")}
           >
-            {profileImageUrl ? (
-              <img
-                src={profileImageUrl}
-                alt={currentUserName}
-                className="profile-icon"
-                onError={(e) => { e.target.style.display = 'none'; }}
-              />
-            ) : (
-              <FontAwesomeIcon icon={faCircleUser} className="profile-icon" />
-            )}
+            <img
+              src={profileImageUrl || DEFAULT_AVATAR}
+              alt={currentUserName}
+              className="profile-icon"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = DEFAULT_AVATAR;
+              }}
+            />
             <span className="user-name">{currentUserName}</span>
           </div>
           <div className="header-icons" style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
@@ -491,10 +496,13 @@ const WhatsAppClone = () => {
                 onClick={() => handleChatSelect(chat)}
               >
                 <img
-                  src={chat.avatar}
+                  src={chat.avatar || DEFAULT_AVATAR}
                   alt={chat.name}
                   className="chat-avatar"
-                  onError={(e) => { e.target.src = DEFAULT_AVATAR; }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DEFAULT_AVATAR;
+                  }}
                 />
                 <div className="chat-info">
                   <div className="chat-header">
@@ -538,10 +546,13 @@ const WhatsAppClone = () => {
                 />
               )}
               <img
-                src={activeRoom.avatar}
+                src={activeRoom.avatar || DEFAULT_AVATAR}
                 alt={activeRoom.name}
                 className="chat-header-avatar"
-                onError={(e) => { e.target.src = DEFAULT_AVATAR; }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = DEFAULT_AVATAR;
+                }}
               />
               <div className="chat-header-info">
                 <h3>{activeRoom.name}</h3>
@@ -645,21 +656,11 @@ const WhatsAppClone = () => {
           </button>
         </div>
       )}
-
-      {/* New Toast for mobile number block */}
-      {toastMessage && (
-        <div className="error-toast" style={{ background: '#ef4444' }}>
-          <p>{toastMessage}</p>
-          <button onClick={() => setToastMessage(null)}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-      )}
     </div>
   );
 };
 
-// WebSocket functions remain unchanged
+// WebSocket functions (unchanged - same as before)
 const subscribeToRoom = (roomId, setMessages, setTypingUsers, setIsConnected, setRooms) => {
   if (!stompClient || !stompClient.connected || !roomId) {
     console.warn('Cannot subscribe: WebSocket not connected or roomId missing', { roomId });

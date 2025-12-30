@@ -12,6 +12,7 @@ import {
   faComment,
   faMapMarkerAlt as faMapMarkerAltSolid,
   faStar as faSolidStar,
+  faShareAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -46,6 +47,10 @@ function Agent() {
   const [reviewsError, setReviewsError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+
+  // Share modal state
+  const [shareAdvisor, setShareAdvisor] = useState(null);
+
   const navigate = useNavigate();
 
   // Location filters
@@ -92,12 +97,12 @@ function Agent() {
     }
   }, [navigate]);
 
-  // Fetch developers
+  // Fetch advisors
   useEffect(() => {
     const fetchDevelopers = async () => {
       try {
         const token = getToken();
-        if (!token) return; // Skip fetching if not authenticated
+        if (!token) return;
 
         setLoading(true);
         setError(null);
@@ -112,7 +117,7 @@ function Agent() {
           }
         );
 
-        if (!response.ok) throw new Error("Failed to fetch developers");
+        if (!response.ok) throw new Error("Failed to fetch advisors");
 
         const data = await response.json();
         setDevelopers(data.data || []);
@@ -132,7 +137,7 @@ function Agent() {
     const fetchDistricts = async () => {
       try {
         const token = getToken();
-        if (!token) return; // Skip fetching if not authenticated
+        if (!token) return;
 
         const res = await axios.get(`${baseUrl}/${apiPrefix}/property-districts`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -196,6 +201,14 @@ function Agent() {
     setReviews([]);
     setAverageRating(0);
     setReviewCount(0);
+  };
+
+  const openShareModal = (advisor) => {
+    setShareAdvisor(advisor);
+  };
+
+  const closeShareModal = () => {
+    setShareAdvisor(null);
   };
 
   const fetchAgentListings = async (developerId) => {
@@ -338,6 +351,36 @@ function Agent() {
     );
   };
 
+  // Generate shareable URL
+ const generateShareUrl = (advisorId) => {
+  return `${window.location.origin}/agents#${advisorId}`;
+};
+
+
+useEffect(() => {
+  if (window.location.hash) {
+    const hashId = window.location.hash.substring(1);
+    if (developers.length > 0) {
+      const adv = developers.find(d => d.id === hashId);
+      if (adv) {
+        openDeveloperModal(adv);
+      }
+    }
+  }
+}, [developers]);
+  // Handle shared link opening
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const advId = params.get("adv");
+    if (advId && developers.length > 0) {
+      const adv = developers.find(d => d.id === advId);
+      if (adv) {
+        openDeveloperModal(adv);
+        window.history.replaceState({}, document.title, "/agents");
+      }
+    }
+  }, [developers]);
+
   // Do not render content if not authenticated
   const token = getToken();
   if (!token) {
@@ -349,21 +392,46 @@ function Agent() {
       <div className="page-container">
         <div className="content-area">
           <h2 className="p-3">Property Advisor</h2>
-          {loading && <p>Loading developers...</p>}
+          {loading && <p>Loading advisors...</p>}
           {error && <p className="error-message">Error: {error}</p>}
           {!loading && !error && filteredDevelopers.length === 0 && (
-            <p>No developers found.</p>
+            <p>No advisors found.</p>
           )}
 
           <div className="agents-grid">
             {filteredDevelopers.map((developer) => (
-              <div key={developer.id} className="nearprop-agent-card">
+              <div key={developer.id} className="nearprop-agent-card" style={{ position: "relative" }}>
+                {/* Share Icon - Top Right */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    background: "rgba(255,255,255,0.8)",
+                    borderRadius: "50%",
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    zIndex: 10,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openShareModal(developer);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faShareAlt} style={{ fontSize: "18px", color: "#3498db" }} />
+                </div>
+
                 <img
                   src={
                     developer.profileImageUrl ||
                     nearpropLogo
                   }
-                  alt={developer.name || "Developer"}
+                  alt={developer.name || "Advisor"}
                   className="nearprop-agent-photo"
                   onError={(e) => {
                     e.target.src = nearpropLogo;
@@ -371,8 +439,8 @@ function Agent() {
                 />
                 <div className="nearprop-agent-info">
                   <div className="nearprop-header d-inline-flex p-2">
-                    <h2 className="nearprop-agent-name ">
-                      {developer.name || "Unknown Developer"}
+                    <h2 className="nearprop-agent-name">
+                      {developer.name || "Unknown Advisor"}
                     </h2>
                     <div className="nearprop-stars">★★★★☆</div>
                   </div>
@@ -380,13 +448,15 @@ function Agent() {
                     Property Advisor • NearProp Verified
                   </p>
 
-                  {/* State & District Display - Added Here */}
+                  {/* State & District Display */}
                   {(developer.state || developer.district) && (
-                    <div style={{ margin: "10px 0", color: "#555", fontSize: "14px", padding: "0 16px" }}>
-                      <FaMapMarkerAlt style={{ marginRight: "6px", color: "#e74c3c" }} />
-                      {developer.state && <span>{developer.state}</span>}
-                      {developer.state && developer.district && <span>, </span>}
-                      {developer.district && <span>{developer.district}</span>}
+                    <div style={{ margin: "10px 0", color: "#555", fontSize: "14px", padding: "0 16px", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <FaMapMarkerAlt style={{ color: "#e74c3c", flexShrink: 0 }} />
+                      <span>
+                        {developer.state && <span>{developer.state}</span>}
+                        {developer.state && developer.district && <span>, </span>}
+                        {developer.district && <span>{developer.district}</span>}
+                      </span>
                     </div>
                   )}
 
@@ -416,7 +486,7 @@ function Agent() {
                     <div className="nearprop-row">
                       <span>Email</span>
                       <p>
-                        <a href={`mailto:${developer.email || "developer@nearprop.com"}`}>
+                        <a href={`mailto:${developer.email || "advisor@nearprop.com"}`}>
                           <FaEnvelope className="contact-icon" />
                         </a>
                       </p>
@@ -469,7 +539,50 @@ function Agent() {
         </div>
       </div>
 
-      {/* Full-Page Modal */}
+      {/* Share Modal */}
+      {shareAdvisor && (
+        <div className="agentlist-modal-fullpage" style={{ zIndex: 9999 }}>
+          <div className="agentlist-modal-content" style={{ maxWidth: "500px" }}>
+            <div className="agentlist-modal-header">
+              <span className="agentlist-modal-title">Share Advisor Profile</span>
+              <span className="agentlist-modal-close" onClick={closeShareModal}>
+                &times;
+              </span>
+            </div>
+            <div style={{ padding: "30px", textAlign: "center" }}>
+              <p>Copy this link to share:</p>
+              <div style={{
+                background: "#f1f1f1",
+                padding: "12px",
+                borderRadius: "8px",
+                wordBreak: "break-all",
+                margin: "15px 0",
+                fontFamily: "monospace",
+              }}>
+                {generateShareUrl(shareAdvisor.id)}
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(generateShareUrl(shareAdvisor.id));
+                  toast.success("Link copied to clipboard!");
+                }}
+                style={{
+                  padding: "10px 20px",
+                  background: "#3498db",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-Page Modal (Profile) */}
       {selectedDeveloper && (
         <div className="agentlist-modal-fullpage">
           <div className="agentlist-modal-content">
@@ -494,20 +607,22 @@ function Agent() {
               />
               <div className="agentlist-modal-info">
                 <h2>
-                  {selectedDeveloper.name || "Unknown Developer"}{" "}
+                  {selectedDeveloper.name || "Unknown Advisor"}{" "}
                   <FaCheckCircle className="agentlist-verified" />
                 </h2>
                 <p className="agentlist-role-text">
                   Property Advisor
-                </p>
+                </p> 
 
                 {/* State & District in Modal Header */}
                 {(selectedDeveloper.state || selectedDeveloper.district) && (
-                  <div style={{ margin: "10px 0", color: "#555", fontSize: "15px" }}>
-                    <FaMapMarkerAlt style={{ marginRight: "8px", color: "#e74c3c" }} />
-                    {selectedDeveloper.state && <span>{selectedDeveloper.state}</span>}
-                    {selectedDeveloper.state && selectedDeveloper.district && <span>, </span>}
-                    {selectedDeveloper.district && <span>{selectedDeveloper.district}</span>}
+                  <div style={{ margin: "10px 0", color: "#555", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <FaMapMarkerAlt style={{ color: "#e74c3c", flexShrink: 0 }} />
+                    <span>
+                      {selectedDeveloper.state && <span>{selectedDeveloper.state}</span>}
+                      {selectedDeveloper.state && selectedDeveloper.district && <span>, </span>}
+                      {selectedDeveloper.district && <span>{selectedDeveloper.district}</span>}
+                    </span>
                   </div>
                 )}
 
@@ -525,7 +640,7 @@ function Agent() {
 
             {/* Action Buttons */}
             <div className="agentlist-actions">
-              <a href={`mailto:${selectedDeveloper.email || "developer@nearprop.com"}`}>
+              <a href={`mailto:${selectedDeveloper.email || "advisor@nearprop.com"}`}>
                 <button className="agentlist-email">
                   <FaEnvelope /> Email
                 </button>
@@ -574,8 +689,8 @@ function Agent() {
                   <h3>Details</h3>
                   <p><FaBuilding /> Role: Property Advisor</p>
                   {(selectedDeveloper.state || selectedDeveloper.district) && (
-                    <p>
-                      <FaMapMarkerAlt style={{ marginRight: "10px" }} />
+                    <p style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <FaMapMarkerAlt />
                       {selectedDeveloper.district && `${selectedDeveloper.district}, `}
                       {selectedDeveloper.state || ""}
                     </p>
@@ -717,12 +832,11 @@ function Agent() {
                                     color: "#4a5568",
                                     marginBottom: "10px",
                                     display: "flex",
-                                    flexWrap: "wrap",
+                                    alignItems: "center",
                                     gap: "6px",
-                                    wordBreak: "break-word",
                                   }}>
-                                    <FontAwesomeIcon icon={faMapMarkerAltSolid} />{" "}
-                                    <span style={{ wordBreak: "break-word", maxWidth: "100%" }}>
+                                    <FontAwesomeIcon icon={faMapMarkerAltSolid} style={{ flexShrink: 0 }} />
+                                    <span style={{ wordBreak: "break-word" }}>
                                       {property.address || "No Address"}
                                     </span>
                                   </div>
@@ -803,6 +917,7 @@ function Agent() {
           </div>
         </div>
       )}
+
       <ToastContainer />
     </>
   );
