@@ -6,15 +6,19 @@ import './FloatingChat.css';
 
 const FloatingChat = ({ isGuest, isBasicPlan, onOpenChat }) => {
   const [isMinimized, setIsMinimized] = useState(true);
+  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
   const handleChatClick = () => {
     const authData = localStorage.getItem('authData');
     
     if (!authData) {
-      // If not logged in, redirect to login
-      alert('Please login to use chat feature');
-      navigate('/login');
+      // Show toast instead of alert
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate('/login');
+      }, 3000); // Toast 3 seconds dikhega, phir login page par redirect
     } else {
       // If logged in, navigate to chat page
       navigate('/chat');
@@ -28,6 +32,15 @@ const FloatingChat = ({ isGuest, isBasicPlan, onOpenChat }) => {
         <FontAwesomeIcon icon={faComments} className="chat-icon" />
         <span className="chat-badge">💬</span>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="chat-toast">
+          <div className="chat-toast-content">
+            <p>Please login to use chat feature</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

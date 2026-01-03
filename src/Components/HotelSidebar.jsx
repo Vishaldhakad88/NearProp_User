@@ -10,12 +10,12 @@ const AD_API_CONFIG = {
   apiPrefix: 'api/v1',
 };
 
-const DEFAULT_AD_IMAGE = '/assets/default-hotel-ad.png';
+const DEFAULT_AD_IMAGE = '/src/assets/staticad.png';
 
 const STATIC_FALLBACK_AD = {
   title: "Real Estate Opportunities",
   description: "Looking for exclusive property deals? Contact us for the best real estate investments.",
-  bannerImageUrl: "https://agentrealestateschools.com/wp-content/uploads/2021/11/real-estate-property.jpg",
+  bannerImageUrl: "/src/assets/staticad.png",
   phoneNumber: "+919155105666",
   whatsappNumber: "919155105666",
   emailAddress: "mail.nearprop@gmail.com",
@@ -176,9 +176,9 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
           <div>
             <strong>Type:</strong> <span>{propertydata?.type || 'N/A'}</span>
           </div>
-          <div>
+          {/* <div>
             <strong>{propertydata?.type === 'Hotel' ? 'Rooms' : 'Capacity'}:</strong> <span>{propertydata?.area || 'N/A'} {propertydata?.landAreaPostfix}</span>
-          </div>
+          </div> */}
           <div>
             <strong>Status:</strong> <span>{propertydata?.status || 'N/A'}</span>
           </div>

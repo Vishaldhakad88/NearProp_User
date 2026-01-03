@@ -578,40 +578,70 @@ h2:after {
 /* Features Section - Height Increased */
 .features-section {
   margin: 16px 0;
-  padding: 24px;                    /* Pehle 16px tha, ab 24px (zyada space inside) */
+  padding: 24px;
   background: #ffffff;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   animation: fadeIn 0.5s ease;
-  min-height: 380px;                /* NAYA: Minimum height badhayi (pehle nahi thi) */
+  /* REMOVED: min-height - ab dynamic hoga */
   display: flex;
   flex-direction: column;
 }
 
 .features-section h2 {
-  margin-bottom: 16px;              /* Heading ke neeche zyada gap */
+  margin-bottom: 16px;
 }
 
-/* Features List - Height aur space badhaya */
+/* Features List - Ab sirf jitni items hain utna hi space lega */
 .features-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 14px;                         /* Gap thoda badhaya (pehle 12px tha) */
+  gap: 14px;
   margin: 0;
   padding: 0;
-  flex-grow: 1;                     /* NAYA: List pura available space le */
-  min-height: 300px;                /* NAYA: List ki minimum height */
+  /* REMOVED: flex-grow aur min-height - ab content ke hisaab se adjust hoga */
 }
 
-/* Mobile par bhi height badhao */
+/* Feature Item */
+.feature-item {
+  padding: 12px 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #333;
+  transition: background 0.2s ease;
+}
+
+.feature-item:hover {
+  background: #e9ecef;
+}
+
+.feature-item input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: var(--secondary-color);
+  cursor: default;
+}
+
+/* No Amenities Message */
+.features-list p {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6c757d;
+  padding: 20px;
+  margin: 0;
+}
+
+/* Mobile par bhi dynamic height */
 @media (max-width: 900px) {
   .features-section {
     padding: 20px;
-    min-height: 340px;              /* Mobile/tablet par bhi badhi height */
+    /* REMOVED: min-height */
   }
 
   .features-list {
-    min-height: 280px;
+    /* REMOVED: min-height */
     gap: 12px;
   }
 }
@@ -619,17 +649,17 @@ h2:after {
 @media (max-width: 600px) {
   .features-section {
     padding: 18px;
-    min-height: 320px;              /* Chhote mobile par bhi acha size */
+    /* REMOVED: min-height */
   }
 
   .features-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    min-height: 260px;
+    /* REMOVED: min-height */
   }
 
   .feature-item {
-    padding: 10px 8px;              /* Item ke andar thoda zyada space */
+    padding: 10px 8px;
     font-size: 0.82rem;
   }
 }
@@ -637,13 +667,13 @@ h2:after {
 @media (max-width: 480px) {
   .features-section {
     padding: 16px;
-    min-height: 300px;
+    /* REMOVED: min-height */
   }
 
   .features-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    min-height: 240px;
+    /* REMOVED: min-height */
   }
 
   .feature-item {
@@ -651,12 +681,6 @@ h2:after {
     font-size: 0.78rem;
   }
 }
-
-.feature-item input[type="checkbox"] {
-  margin-right: 6px;
-  accent-color: var(--secondary-color);
-}
-
 /* Gallery Section */
 .gallery-section {
   margin: 16px 0;

@@ -1715,7 +1715,7 @@ const isBasicPlan = planName.startsWith("basic");
               <div className="ad-container">
                 <div className="ad-image-wrapper">
                   <img
-                    src="https://agentrealestateschools.com/wp-content/uploads/2021/11/real-estate-property.jpg"
+                   src="/src/assets/staticad.png"
                     alt="Real Estate Opportunities"
                     className="ad-image"
                     onError={(e) => { e.target.src = DEFAULT_AD_IMAGE; }}

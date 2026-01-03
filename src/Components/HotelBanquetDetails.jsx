@@ -742,16 +742,16 @@ const HotelBanquetDetails = () => {
                   <span><FontAwesomeIcon icon={faBuilding} /> {property?.type || 'N/A'}</span>
                   <small>Property Type</small>
                 </div>
-                {propertyType === 'hotel' && (
+                {/* {propertyType === 'hotel' && (
                   <div className="overview-item">
                     <span><FontAwesomeIcon icon={faBed} /> {property?.bedrooms || 'N/A'}</span>
                     <small>Beds</small>
                   </div>
-                )}
-                <div className="overview-item">
+                )} */}
+                {/* <div className="overview-item">
                   <span><FontAwesomeIcon icon={faRulerCombined} /> {property?.area || 'N/A'} {propertyType === 'hotel' ? 'Rooms' : 'Capacity'}</span>
                   <small>{propertyType === 'hotel' ? 'Total Rooms' : 'Capacity'}</small>
-                </div>
+                </div> */}
                 <div className="overview-item">
                   <span><FontAwesomeIcon icon={faCalendarDays} /> {property?.createdAt || 'N/A'}</span>
                   <small>Listed On</small>
