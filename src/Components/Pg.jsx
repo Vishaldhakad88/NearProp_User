@@ -210,6 +210,23 @@ function Pg() {
 
   const { pgHostelBaseUrl, apiPrefix } = API_CONFIG;
 
+  // ✅ Track property view
+  const trackPropertyView = async (propertyId) => {
+    try {
+      const url = `${pgHostelBaseUrl}/${apiPrefix}/landlord/property/view/${propertyId}`;
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // API call is fire-and-forget, no need to handle response
+    } catch (err) {
+      // Silently fail - don't interrupt user experience
+      console.error('Failed to track property view:', err);
+    }
+  };
+
   // ✅ Get user location
   useEffect(() => {
     const getUserLocation = async () => {
@@ -476,6 +493,7 @@ function Pg() {
                   to={`/Pgandhostel/${property.id}`}
                   key={property.id}
                   style={{ textDecoration: 'none' }}
+                  onClick={() => trackPropertyView(property.id)}
                 >
                   <div
                     style={{
@@ -708,7 +726,7 @@ function Pg() {
                     onChange={(e) => setFilterPriceMin(e.target.value)}
                     style={{ flex: '1', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#1a202c' }}
                   />
-                  <span style={{ fontSize: '0.875rem', color: '#4a5568' }}>to</span>
+                  <span style={{ fontSize: '0.875rem', color: '#4a5568', }}>to</span>
                   <input
                     type="number"
                     placeholder="Max Price"

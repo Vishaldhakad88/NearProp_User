@@ -613,6 +613,23 @@ function Hostels() {
 
   const { pgHostelBaseUrl, apiPrefix } = API_CONFIG;
 
+  // ✅ Track property view
+  const trackPropertyView = async (propertyId) => {
+    try {
+      const url = `${pgHostelBaseUrl}/${apiPrefix}/landlord/property/view/${propertyId}`;
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // API call is fire-and-forget, no need to handle response
+    } catch (err) {
+      // Silently fail - don't interrupt user experience
+      console.error('Failed to track property view:', err);
+    }
+  };
+
   // ✅ Fetch Hostel properties
   useEffect(() => {
     const fetchProperties = async () => {
@@ -739,6 +756,7 @@ function Hostels() {
               to={`/Pgandhostel/${property.id}`}
               key={property.id}
               className="property-card-link"
+              onClick={() => trackPropertyView(property.id)}
             >
               <div
                 className="landing-property-card"
