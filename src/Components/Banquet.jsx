@@ -68,6 +68,24 @@ function Banquet() {
 
   const { hotelBanquetBaseUrl, apiPrefix } = API_CONFIG;
 
+  // ✅ Track property click (fire-and-forget) - Uses correct _id
+  const trackPropertyClick = async (propertyId) => {
+    if (!propertyId) return;
+    try {
+      const url = `${hotelBanquetBaseUrl}/${apiPrefix}/property-click/BanquetHall/${propertyId}/click`;
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // Silent success - no need to handle response
+    } catch (err) {
+      console.error('Failed to track banquet hall click:', err);
+      // Silent fail - don't disturb user
+    }
+  };
+
   // ✅ Fetch banquet properties
   useEffect(() => {
     const fetchProperties = async () => {
@@ -79,7 +97,7 @@ function Banquet() {
 
         const data = JSON.parse(text);
         const banquetProperties = (data.data?.banquetHalls || []).map(hall => ({
-          id: hall.banquetHallId || hall._id,
+          id: hall._id,  // ← Critical Fix: Use MongoDB _id directly
           title: hall.name || "Untitled Banquet Hall",
           address: `${hall.city || "Unknown"}, ${hall.state || "Unknown"}`,
           imageUrls: hall.images || [],
@@ -110,12 +128,12 @@ function Banquet() {
     fetchProperties();
   }, [hotelBanquetBaseUrl, apiPrefix]);
 
-  // ✅ Fetch districts/states/cities from new API
+  // ✅ Fetch districts/states/cities
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const res = await axios.get('https://api.nearprop.com/api/property-districts');
-        const locationsData = res.data || []; // assuming array of objects
+        const locationsData = res.data || [];
 
         setDistricts(locationsData);
 
@@ -145,7 +163,7 @@ function Banquet() {
     }
   }, [selectedState, districts]);
 
-  // ✅ Apply Filters (real-time on any filter change)
+  // ✅ Real-time filtering
   useEffect(() => {
     let filtered = [...properties];
 
@@ -173,7 +191,6 @@ function Banquet() {
       );
     }
 
-    // 🔹 Location filters
     if (selectedState) {
       filtered = filtered.filter((p) => p.state === selectedState);
     }
@@ -197,7 +214,7 @@ function Banquet() {
     selectedCity
   ]);
 
-  // Filter states and cities based on search
+  // Search filtering for dropdowns
   const filteredStates = states.filter(state =>
     state.toLowerCase().includes(stateSearch.toLowerCase())
   );
@@ -219,7 +236,7 @@ function Banquet() {
       </div>
 
       <div className="blog-main-container">
-        {/* Left Section */}
+        {/* Left Section - Cards */}
         <div className="blog-left-section card-wrapper">
           {filteredProperties.length === 0 ? (
             <div className="no-properties text-center py-5">
@@ -231,6 +248,7 @@ function Banquet() {
                 to={`/HotelAndBanquetDetails/banquet/${property.id}`}
                 key={property.id}
                 className="property-card-link"
+                onClick={() => trackPropertyClick(property.id)}  // ← Correct ID sent to API
               >
                 <div
                   className="landing-property-card"
@@ -287,10 +305,6 @@ function Banquet() {
                         borderRadius: "8px",
                         fontSize: "0.875rem",
                         fontWeight: "500",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                        wordBreak: "break-word",
                       }}
                     >
                       <div>
@@ -314,11 +328,9 @@ function Banquet() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
-                      wordBreak: "break-word",
                     }}
                   >
                     <h2
-                      className="landing"
                       style={{
                         fontSize: "1.25rem",
                         fontWeight: "600",
@@ -330,39 +342,26 @@ function Banquet() {
                         display: "-webkit-box",
                         WebkitLineClamp: "2",
                         WebkitBoxOrient: "vertical",
-                        wordBreak: "break-word",
                       }}
                     >
                       {property.title || "Untitled Banquet Hall"}
                     </h2>
+
                     <div
-                      className="landing-location"
                       style={{
                         fontSize: "0.875rem",
                         color: "#4a5568",
                         display: "flex",
-                        alignItems: "flex-start",
-                        gap: "0",
+                        alignItems: "center",
+                        gap: "8px",
                         marginBottom: "12px",
-                        flexWrap: "wrap",
-                        wordBreak: "break-word",
                       }}
                     >
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          whiteSpace: "nowrap",
-                          marginRight: "8px",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
-                        {property.address || "No Address"}
-                      </span>
+                      <FontAwesomeIcon icon={faMapMarkerAlt} />
+                      {property.address || "No Address"}
                     </div>
 
                     <div
-                      className="landing-details"
                       style={{
                         display: "flex",
                         gap: "16px",
@@ -370,7 +369,6 @@ function Banquet() {
                         color: "#4a5568",
                         marginBottom: "12px",
                         flexWrap: "wrap",
-                        wordBreak: "break-word",
                       }}
                     >
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -380,28 +378,23 @@ function Banquet() {
                         <FontAwesomeIcon icon={faCar} /> {property.parking || 0}
                       </span>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        {property.area || "N/A"} {property.sizePostfix || "Sq Ft"}
+                        {property.area || "N/A"} {property.sizePostfix}
                       </span>
                     </div>
 
                     <div
-                      className="landing-type text-dark"
                       style={{
                         fontSize: "0.875rem",
                         fontWeight: "600",
                         color: "#3182ce",
                         marginBottom: "12px",
                         textTransform: "capitalize",
-                        display: "flex",
-                        alignItems: "center",
-                        wordBreak: "break-word",
                       }}
                     >
                       <strong>{property.type || "Banquet Hall"}</strong>
                     </div>
 
                     <div
-                      className="landing-footer"
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
@@ -411,15 +404,14 @@ function Banquet() {
                         paddingTop: "12px",
                         flexWrap: "wrap",
                         gap: "10px",
-                        wordBreak: "break-word",
                       }}
                     >
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <FontAwesomeIcon icon={faUser} />{" "}
+                        <FontAwesomeIcon icon={faUser} />
                         {property.owner?.name || "Unknown"}
                       </span>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <FontAwesomeIcon icon={faPaperclip} />{" "}
+                        <FontAwesomeIcon icon={faPaperclip} />
                         {property.createdAt
                           ? new Date(property.createdAt).toLocaleDateString()
                           : "N/A"}
@@ -432,13 +424,13 @@ function Banquet() {
           )}
         </div>
 
-        {/* Right Sidebar */}
+        {/* Right Sidebar - Filters */}
         <div className="residential-blog-right-sidebar md:block">
           <aside className="residential">
             <div className="residential-filter">
               <h3 className="filter-title">Filter Banquet Halls</h3>
 
-              {/* 🔹 State - Searchable Dropdown */}
+              {/* State Dropdown */}
               <div className="filter-group position-relative">
                 <label className="filter-label">State</label>
                 <div
@@ -482,24 +474,7 @@ function Banquet() {
                 )}
               </div>
 
-              {/* District - Normal Select */}
-              {/* <div className="filter-group">
-                <label className="filter-label">District</label>
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => setSelectedDistrict(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">All Districts</option>
-                  {filteredDistricts.map((d) => (
-                    <option key={d.id} value={d.name}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
-
-              {/* 🔹 City - Searchable Dropdown */}
+              {/* City Dropdown */}
               <div className="filter-group position-relative">
                 <label className="filter-label">City</label>
                 <div
@@ -543,7 +518,6 @@ function Banquet() {
                 )}
               </div>
 
-              {/* Existing Filters */}
               <div className="filter-group">
                 <label className="filter-label">Search by Name</label>
                 <input
@@ -608,7 +582,6 @@ function Banquet() {
         </div>
       </div>
 
-      {/* Additional CSS */}
       <style jsx>{`
         .cursor-pointer { cursor: pointer; }
         .hover-bg-light:hover { background-color: #f8f9fa; }

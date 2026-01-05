@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   faCircleUser,
   faEllipsisV,
@@ -58,6 +58,7 @@ const WhatsAppClone = () => {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Get auth data from localStorage
   const getAuthData = () => {
@@ -104,29 +105,6 @@ const WhatsAppClone = () => {
       setProfileImageUrl(null);
     }
   };
-
-  useEffect(() => {
-    if (!isGuest) {
-      fetchUserProfile();
-      fetchRooms();
-    } else {
-      setCurrentUserName('Guest');
-      setProfileImageUrl(null);
-    }
-  }, [isGuest]);
-
-  // Prevent auto scroll to top on page load
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
-
-  // const scrollToBottom = () => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // };
-
-  // useEffect(() => {
-  //   scrollToBottom();
-  // }, [messages, activeRoom]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -427,6 +405,78 @@ const WhatsAppClone = () => {
   const filteredRooms = rooms.filter((room) =>
     room.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Handle property redirect and auto-open/create chat
+  useEffect(() => {
+    const handlePropertyRedirect = async () => {
+      if (!isGuest && token && location.state?.propertyId && location.state?.propertyTitle) {
+        const { propertyId, propertyTitle } = location.state;
+        
+        try {
+          // First fetch rooms
+          await fetchRooms();
+          
+          // Check if room already exists for this property
+          const existingRoom = rooms.find(room => room.propertyId === parseInt(propertyId));
+          
+          if (existingRoom) {
+            // If room exists, open it
+            await handleChatSelect(existingRoom);
+          } else {
+            // If room doesn't exist, create new room
+            try {
+              const response = await axios.post(
+                `${API_CONFIG.baseUrl}/${API_CONFIG.apiPrefix}/chat/rooms`,
+                {
+                  propertyId: parseInt(propertyId),
+                  title: propertyTitle ? `Chat for ${propertyTitle}` : 'Interested in property',
+                  initialMessage: "Hello, I'm interested in this property. Can you provide more details?",
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+              
+              const newRoom = {
+                id: response.data.id,
+                name: response.data.seller?.name || response.data.buyer?.name || 'Property Owner',
+                avatar: response.data.seller?.avatar || response.data.buyer?.avatar || DEFAULT_AVATAR,
+                propertyId: response.data.property?.id,
+                district: response.data.property?.districtName || 'Unknown',
+                thumbnail: response.data.property?.thumbnail,
+                unreadCount: 0,
+                title: response.data.title || 'Chat Room',
+                lastMessage: response.data.lastMessage || null,
+              };
+              
+              setRooms((prev) => [...prev, newRoom]);
+              await handleChatSelect(newRoom);
+            } catch (err) {
+              console.error('Error creating chat room:', err);
+              setError('Failed to create chat room. Please try again.');
+            }
+          }
+          
+          // Clear location state after processing
+          navigate('/chat', { replace: true, state: {} });
+        } catch (err) {
+          console.error('Error handling property redirect:', err);
+        }
+      }
+    };
+
+    if (!isGuest && token) {
+      fetchUserProfile();
+      fetchRooms();
+      handlePropertyRedirect();
+    } else {
+      setCurrentUserName('Guest');
+      setProfileImageUrl(null);
+    }
+  }, [isGuest, token, location.state?.propertyId]);
 
   useEffect(() => {
     if (!isGuest && token && activeRoom) {

@@ -150,7 +150,7 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
     setFormError(null);
     alert('Message sent successfully!');
   };
-
+       
   const handleAdContactClick = (ad, clickType, url) => {
     if (ad.id) {
       trackAdClick(ad.id, clickType);
@@ -158,8 +158,10 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
     window.open(url, clickType === 'phone' ? '_self' : '_blank');
   };
 
+  console.log("dgvdhbvdjh",owner);
+  
   const normalizedOwner = {
-    name: owner?.name || 'Unknown Agent',
+    name: owner?.name || 'Unknown Agent', 
     phone: owner?.phone || 'N/A',
     whatsapp: owner?.whatsapp || 'N/A',
     avatar: owner?.avatar || propertydata?.imageUrls?.[0] || '/placeholder.jpg',
@@ -336,13 +338,13 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
           onError={(e) => { e.target.src = '/placeholder.jpg'; }} 
         />
         <div className="agent-details">
-          <div><strong>{normalizedOwner.name}</strong></div>
+          <div><strong>{owner.name.name}</strong></div>
           <div>{owner?.role || 'Agent'}</div>
           <div className="agent-contact">
-            <a href={`tel:${normalizedOwner.phone}`} className="ad-contact-button call">
+            <a href={`tel:${owner.phone}`} className="ad-contact-button call">
               <FontAwesomeIcon icon={faPhone} className="me-1" /> Call
             </a>
-            <a href={`https://wa.me/${normalizedOwner.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ad-contact-button whatsapp">
+            <a href={`https://wa.me/${owner.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ad-contact-button whatsapp">
               <FontAwesomeIcon icon={faWhatsapp} className="me-1" /> WhatsApp
             </a>
           </div>
@@ -385,7 +387,7 @@ const HotelSidebar = ({ propertyId, propertyTitle, owner, propertydata }) => {
             Send Message
           </button>
         </form>
-      </div>
+      </div> 
     </div>
   );
 };

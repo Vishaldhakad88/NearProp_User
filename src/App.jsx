@@ -154,7 +154,7 @@ function AppContent() {
             }
           />
 
-          <Route
+          <Route 
             path="/chat"
             element={
               <ProtectedRoute>
